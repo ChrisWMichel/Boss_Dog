@@ -1,16 +1,20 @@
 <template>
-    <div class="flex items-center justify-center">
-        <img
-            alt="projectLogo"
-            src="./assets/projectLogo.png"
-            class="mb-10 w-60"
-        />
-    </div>
-    <div class="text-3xl bg-green-400">Home Page</div>
-    <HelloWorld msg="Vite + Vue" />
+    <header>
+        <!-- <nav>
+            <ul>
+                <li>
+                    <router-link to="/dashboard">Dashboard</router-link>
+                </li>
+                <li>
+                    <router-link to="/login">Login</router-link>
+                </li>
+            </ul>
+        </nav> -->
+    </header>
+    <main>
+        <RouterView />
+    </main>
 </template>
 
-<script setup>
-import HelloWorld from "./components/HelloWorld.vue";
-</script>
+<script setup></script>
 <style scoped></style>
