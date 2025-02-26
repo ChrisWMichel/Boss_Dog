@@ -8,6 +8,6 @@
     @vite(['resources/css/app.css', 'admin-vue/src/style.css', 'admin-vue/src/main.js'])
   </head>
   <body class="h-full">
-    <div id="app"></div>
+    <div id="app" class="h-full"></div>
   </body>
 </html>

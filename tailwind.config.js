@@ -8,7 +8,7 @@ export default {
         "./resources/**/*.blade.php",
         "./resources/**/*.js",
         "./resources/**/*.vue",
-        "./admin-vue/src/**/*.{vue,js,ts,jsx,tsx}",
+        "./admin-vue/**/*.{vue,js,ts,jsx,tsx}",
     ],
     theme: {
         extend: {

@@ -1,34 +1,61 @@
 <template>
-    <div
-        class="flex flex-col justify-center flex-1 px-6 py-20 bg-gray-200 rounded-md shadow-lg w-min-full sm:px-12 md:px-16 lg:px-24 xl:px-32 shadow-dark-400"
-        style="padding-top: 20px; padding-bottom: 20px"
-    >
-        <!-- <div class="sm:mx-auto sm:w-full sm:max-w-sm">
-            <h2
-                class="mt-10 text-2xl font-bold tracking-tight text-center text-gray-900 sm:text-3xl"
-            >
-                {{ title }}
-            </h2>
-        </div> -->
+    <div class="flex min-h-screen mx-auto">
+        <div
+            class="w-[200px] bg-gray-500 text-white fixed top-0 left-0 h-full transition-transform duration-300"
+            :class="{ '-translate-x-full': !sidebarOpen }"
+        >
+            <sidebar />
+        </div>
 
         <div
-            class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm"
-            style="margin-top: 30px"
+            class="flex-1 transition-all duration-300"
+            :class="{ 'ml-[200px]': sidebarOpen, 'ml-0': !sidebarOpen }"
         >
-            <router-view />
+            <header
+                class="fixed top-0 right-0 z-10 h-16 transition-all duration-300 bg-gray-200"
+                :class="{ 'left-[200px]': sidebarOpen, 'left-0': !sidebarOpen }"
+            >
+                <top-menu
+                    :sidebarOpen="sidebarOpen"
+                    @toggleSidebar="toggleSidebar"
+                />
+            </header>
+            <main class="h-full pt-10 mt-7">
+                <div class="h-full p-4 bg-white rounded">
+                    <router-view />
+                </div>
+            </main>
         </div>
     </div>
 </template>
 
 <script setup>
-defineProps({
-    title: String,
+import Sidebar from "../Sidebar.vue";
+import TopMenu from "../TopMenu.vue";
+import { ref, onMounted, onUnmounted } from "vue";
+
+const sidebarOpen = ref(true);
+
+const toggleSidebar = () => {
+    sidebarOpen.value = !sidebarOpen.value;
+};
+
+onMounted(() => {
+    handleSidebarOpen();
+    window.addEventListener("resize", handleSidebarOpen);
 });
+
+onUnmounted(() => {
+    window.removeEventListener("resize", handleSidebarOpen);
+});
+
+const handleSidebarOpen = () => {
+    if (window.outerWidth <= 768) {
+        sidebarOpen.value = false;
+    } else {
+        sidebarOpen.value = true;
+    }
+};
 </script>
 
-<style scoped>
-.custom-img-size {
-    height: 12.25rem;
-    margin-bottom: 20px;
-}
-</style>
+<style scoped></style>
