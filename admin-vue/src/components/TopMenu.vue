@@ -3,6 +3,15 @@
         <button @click="toggleSidebar">
             <Bars3Icon class="w-8 h-8 hover:text-slate-400" />
         </button>
+        <div class="flex items-center justify-center flex-1">
+            <router-link :to="{ name: 'home' }" class="block mx-auto">
+                <img
+                    class="mx-auto rounded-md w-14 h-14 custom-img-size"
+                    src="../assets/bossDogLogo.png"
+                    alt="Boss Man Company"
+                />
+            </router-link>
+        </div>
         <div><profile-dropdown /></div>
     </div>
 </template>

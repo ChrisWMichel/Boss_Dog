@@ -5,7 +5,9 @@
                 <MenuButton
                     class="inline-flex justify-center w-full px-4 py-2 text-sm font-medium text-black rounded-md hover:bg-black/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-black/75"
                 >
-                    <span class="mt-3 mr-2">John Smith</span>
+                    <span class="mt-3 mr-2"
+                        >{{ user.firstname }} {{ user.lastname }}</span
+                    >
                     <img
                         src="https://randomuser.me/api/portraits/men/32.jpg"
                         alt="profile"
@@ -45,6 +47,7 @@
                         </MenuItem>
                         <MenuItem v-slot="{ active }">
                             <button
+                                @click="logout"
                                 :class="[
                                     active
                                         ? 'bg-slate-500 text-slate-100'
@@ -73,4 +76,40 @@ import {
     ArrowLeftStartOnRectangleIcon,
     UserIcon,
 } from "@heroicons/vue/24/outline";
+import { useUserStore } from "../../store/useUserStore";
+import { useRouter } from "vue-router";
+
+const userStore = useUserStore();
+const router = useRouter();
+const user = userStore.getUser;
+
+const logout = () => {
+    userStore.logout().then(() => {
+        console.log("Logged out");
+        router.push({ name: "login" });
+    });
+};
+
+// const logout = () => {
+//     axios
+//         .post(
+//             LOGOUT_URL,
+//             {},
+//             {
+//                 headers: {
+//                     Authorization: `Bearer ${userStore.user.token}`,
+//                 },
+//             }
+//         )
+//         .then(() => {
+//             userStore.user.token = "";
+//             userStore.user.data = {};
+//             sessionStorage.removeItem("TOKEN");
+//             console.log("Logged out");
+//             router.push({ name: "login" });
+//         })
+//         .catch((error) => {
+//             console.error(error);
+//         });
+// };
 </script>

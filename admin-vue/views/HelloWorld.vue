@@ -1,5 +1,5 @@
 <template>
-    <loginForm />
+    <h1>Public Side</h1>
 </template>
 
 <script setup>

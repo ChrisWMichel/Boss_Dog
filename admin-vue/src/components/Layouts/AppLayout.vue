@@ -1,5 +1,5 @@
 <template>
-    <div class="flex min-h-screen mx-auto">
+    <div v-if="userData.id" class="flex min-h-screen mx-auto">
         <div
             class="w-[200px] bg-gray-500 text-white fixed top-0 left-0 h-full transition-transform duration-300"
             :class="{ '-translate-x-full': !sidebarOpen }"
@@ -27,14 +27,23 @@
             </main>
         </div>
     </div>
+    <div v-else>
+        <spinnerAppLayout />
+    </div>
 </template>
 
 <script setup>
 import Sidebar from "../Sidebar.vue";
 import TopMenu from "../TopMenu.vue";
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted, computed } from "vue";
+import { useUserStore } from "../../../store/useUserStore";
+import spinnerAppLayout from "./spinnerAppLayout.vue";
 
 const sidebarOpen = ref(true);
+
+const userStore = useUserStore();
+
+const userData = computed(() => userStore.getUser);
 
 const toggleSidebar = () => {
     sidebarOpen.value = !sidebarOpen.value;
@@ -43,6 +52,7 @@ const toggleSidebar = () => {
 onMounted(() => {
     handleSidebarOpen();
     window.addEventListener("resize", handleSidebarOpen);
+    console.log("userData", userData.value);
 });
 
 onUnmounted(() => {
