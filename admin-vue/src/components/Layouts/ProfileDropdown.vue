@@ -76,7 +76,7 @@ import {
     ArrowLeftStartOnRectangleIcon,
     UserIcon,
 } from "@heroicons/vue/24/outline";
-import { useUserStore } from "../../store/useUserStore";
+import { useUserStore } from "../../../store/useUserStore";
 import { useRouter } from "vue-router";
 
 const userStore = useUserStore();
@@ -85,7 +85,6 @@ const user = userStore.getUser;
 
 const logout = () => {
     userStore.logout().then(() => {
-        console.log("Logged out");
         router.push({ name: "login" });
     });
 };

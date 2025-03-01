@@ -6,7 +6,7 @@ import login from "../views/auth/loginForm.vue";
 import RequestPassword from "../views/auth/RequestPassword.vue";
 import resetPassword from "../views/auth/resetPassword.vue";
 import AppLayout from "../src/components/Layouts/AppLayout.vue";
-import Products from "../views/admin/Products.vue";
+import Products from "../views/admin/Products/index.vue";
 import { useUserStore } from "../store/useUserStore";
 import NotFound from "../views/NotFound.vue";
 

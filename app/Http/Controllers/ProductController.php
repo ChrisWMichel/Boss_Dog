@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
-use Illuminate\Http\Request;
+use App\Http\Requests\ProductRequest;
+use App\Http\Resources\ProductListResource;
+use App\Http\Resources\ProductResource;
+use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller
 {
@@ -12,23 +15,17 @@ class ProductController extends Controller
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+      
+       return ProductListResource::collection(Product::query()->paginate(10));
+  
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(ProductRequest $request)
     {
-        //
+        return new ProductResource(Product::create($request->validated()));
     }
 
     /**
@@ -36,23 +33,16 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Product $product)
-    {
-        //
+        return new ProductResource($product);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Product $product)
+    public function update(ProductRequest $request, Product $product)
     {
-        //
+        $product->update($request->validated());
+        return new ProductResource($product);
     }
 
     /**
@@ -60,6 +50,7 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
-        //
+        $product->delete();
+        return response()->noContent();
     }
 }

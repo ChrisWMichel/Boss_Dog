@@ -90,7 +90,7 @@ import GuestLayout from "../../src/components/Layouts/GuestLayout.vue";
 import { ref, watch } from "vue";
 import { useUserStore } from "../../store/useUserStore";
 import { useRouter } from "vue-router";
-import spinner from "../../src/components/Layouts/spinner.vue";
+import spinner from "../../src/components/core/spinner.vue";
 
 let loading = ref(false);
 let errorMsg = ref(null);

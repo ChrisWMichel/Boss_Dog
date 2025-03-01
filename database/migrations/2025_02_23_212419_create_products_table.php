@@ -17,7 +17,7 @@ return new class extends Migration
             $table->timestamps();
             $table->string('title');
             $table->string('slug')->unique();
-            $table->string('image_mime')->nullable();
+            $table->string('image')->nullable();
             $table->string('image_size')->nullable();
             $table->longText('description')->nullable();
             $table->decimal('price', 10, 2);

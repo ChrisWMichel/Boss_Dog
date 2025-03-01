@@ -7,7 +7,7 @@
             <router-link :to="{ name: 'home' }" class="block mx-auto">
                 <img
                     class="mx-auto rounded-md w-14 h-14 custom-img-size"
-                    src="../assets/bossDogLogo.png"
+                    src="../../assets/bossDogLogo.png"
                     alt="Boss Man Company"
                 />
             </router-link>

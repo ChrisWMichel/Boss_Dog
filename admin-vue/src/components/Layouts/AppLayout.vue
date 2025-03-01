@@ -33,11 +33,11 @@
 </template>
 
 <script setup>
-import Sidebar from "../Sidebar.vue";
-import TopMenu from "../TopMenu.vue";
+import Sidebar from "./Sidebar.vue";
+import TopMenu from "./TopMenu.vue";
 import { ref, onMounted, onUnmounted, computed } from "vue";
 import { useUserStore } from "../../../store/useUserStore";
-import spinnerAppLayout from "./spinnerAppLayout.vue";
+import spinnerAppLayout from "../core/spinnerAppLayout.vue";
 
 const sidebarOpen = ref(true);
 
@@ -52,7 +52,6 @@ const toggleSidebar = () => {
 onMounted(() => {
     handleSidebarOpen();
     window.addEventListener("resize", handleSidebarOpen);
-    console.log("userData", userData.value);
 });
 
 onUnmounted(() => {

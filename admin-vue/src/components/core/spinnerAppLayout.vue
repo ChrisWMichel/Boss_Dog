@@ -1,11 +1,11 @@
 <template>
     <div
         role="status"
-        class="flex items-center justify-center min-h-full mt-40"
+        class="flex flex-col items-center justify-center min-h-full py-10"
     >
         <svg
             aria-hidden="true"
-            class="w-1/5 text-gray-200 h-1/5 animate-spin dark:text-gray-600 fill-blue-600"
+            class="w-32 h-32 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
             viewBox="0 0 100 101"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
@@ -19,7 +19,7 @@
                 fill="currentFill"
             />
         </svg>
-        <span class="text-black sr-only">Loading...</span>
+        <span class="text-black">Loading...</span>
     </div>
 </template>
 
