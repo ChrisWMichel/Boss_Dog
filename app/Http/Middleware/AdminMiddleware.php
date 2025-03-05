@@ -17,7 +17,6 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        Log::info('AdminMiddleware: Checking admin status');
         if(Auth::user() && Auth::user()->is_admin == 1) {
             return $next($request);
         } else {
