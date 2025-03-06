@@ -31,9 +31,6 @@ export const useProductStore = defineStore("products", () => {
             });
             //console.log("Get products response:", response.data);
 
-            // products.value.data = Array.isArray(response.data)
-            //     ? response.data
-            //     : [];
             products.value.data = response.data;
             sessionStorage.setItem(
                 "products",
@@ -50,7 +47,7 @@ export const useProductStore = defineStore("products", () => {
     }
 
     async function createProduct(data) {
-        console.log("Data:", data);
+        const url = null;
         try {
             if (data.image instanceof File) {
                 const form = new FormData();
@@ -60,27 +57,33 @@ export const useProductStore = defineStore("products", () => {
                 form.append("price", data.price);
                 data = form;
             }
-            console.log("Sending request to /products");
+
             const response = await axiosClient.post("/products", data, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
             });
-            console.log("Response:", response);
-            if (response && response.data) {
-                if (!Array.isArray(products.value.data)) {
-                    products.value.data = [];
-                }
-                products.value.data.push(response.data);
+
+            if (response.data) {
+                products.value.data.data.push(response.data);
                 sessionStorage.setItem(
                     "products",
                     JSON.stringify(products.value.data)
                 );
+
+                toast.success("Product created successfully");
+                this.getProducts({
+                    url,
+                    search: "",
+                    per_page: "10",
+                    sortField: "",
+                    sortDirection: "asc",
+                });
             } else {
                 console.error("Unexpected response structure:", response);
             }
 
-            return response;
+            // return response;
         } catch (error) {
             console.error("Create product error:", error);
             if (error.response && error.response.data) {

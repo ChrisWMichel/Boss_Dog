@@ -14,7 +14,9 @@
                     <option value="50">50</option>
                     <option value="100">100</option>
                 </select>
-                <span class="ml-3">Found {{ products.total }} products</span>
+                <span class="ml-3"
+                    >Found {{ products.data.meta.total }} products</span
+                >
             </div>
             <div>
                 <input
@@ -70,7 +72,14 @@
                     <tableSorting field="actions"> Actions </tableSorting>
                 </tr>
             </thead>
-            <tbody v-if="products.loading || !products.data.data.length">
+            <tbody
+                v-if="
+                    products.loading ||
+                    !products.data ||
+                    !products.data.data ||
+                    !products.data.data.length
+                "
+            >
                 <tr>
                     <td colspan="6">
                         <spinnerAppLayout v-if="products.loading" />
@@ -91,7 +100,7 @@
                     <td class="p-2 border-b">
                         <img
                             class="object-cover w-16 h-16"
-                            :src="product.image"
+                            :src="`/${product.image}`"
                             :alt="product.title"
                         />
                     </td>
@@ -178,7 +187,7 @@
             v-if="!products.loading"
             class="flex items-center justify-center gap-10 mt-5"
         >
-            <div v-if="products.data.data.length">
+            <div v-if="products.data.data && products.data.data.length">
                 Showing from {{ products.data.meta.from }} to
                 {{ products.data.meta.to }}
             </div>
@@ -231,13 +240,10 @@ const perPage = ref(10);
 const search = ref("");
 const products = computed(() => productStore.products);
 const sortField = ref("updated_at");
-const sortDirection = ref("desc");
+const sortDirection = ref("asc");
 
-//console.log("productsTable", products.value);
-
-//const product = ref({});
 const showProductModal = ref(false);
-
+console.log("productTable.vue", products.value);
 const emit = defineEmits(["clickEdit"]);
 
 onMounted(() => {
@@ -254,19 +260,21 @@ function getForPage(ev, link) {
 }
 
 function getProducts(url = null) {
-    console.log("sortDirection", sortDirection.value);
-    console.log("sortField", sortField.value);
-    productStore.getProducts({
-        url,
-        search: search.value,
-        per_page: perPage.value,
-        sortField: sortField.value,
-        sortDirection: sortDirection.value,
-    });
+    productStore
+        .getProducts({
+            url,
+            search: search.value,
+            per_page: perPage.value,
+            sortField: sortField.value,
+            sortDirection: sortDirection.value,
+        })
+        .catch((error) => {
+            console.error("Error fetching products:", error);
+        });
 }
 
 function sortProducts(field) {
-    console.log("Sorting by field:", field);
+    //console.log("Sorting by field:", field);
     if (field === sortField.value) {
         if (sortDirection.value === "desc") {
             sortDirection.value = "asc";
@@ -290,9 +298,14 @@ function deleteProduct(product) {
         return;
     }
 
-    productStore.deleteProduct(product.id).then(() => {
-        getProducts();
-    });
+    productStore
+        .deleteProduct(product.id)
+        .then(() => {
+            getProducts();
+        })
+        .catch((error) => {
+            console.error("Error deleting product:", error);
+        });
 }
 
 function editProduct(p) {

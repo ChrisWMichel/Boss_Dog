@@ -39,7 +39,11 @@
                                         : "Create New Product"
                                 }}
                             </DialogTitle>
-                            <form @submit.prevent="onSubmit">
+                            <spinner
+                                v-if="product.loading"
+                                class="flex items-center justify-center"
+                            />
+                            <form v-else @submit.prevent="onSubmit">
                                 <div class="mt-2">
                                     <custom-input
                                         v-model="product.title"
@@ -72,6 +76,7 @@
                                     class="flex flex-col-reverse px-4 py-3 bg-gray-50 sm:px-6 sm:flex-row-reverse"
                                 >
                                     <button
+                                        :disabled="product.loading"
                                         type="submit"
                                         class="px-4 py-2 mt-2 text-white bg-indigo-500 rounded hover:bg-indigo-700 hover:text-white sm:ml-2 sm:mt-0"
                                     >
@@ -105,6 +110,7 @@ import {
 } from "@headlessui/vue";
 import { useProductStore } from "../../../store/useProductStore";
 import customInput from "../../../src/components/core/customInput.vue";
+import spinner from "../../../src/components/core/spinner.vue";
 
 const productStore = useProductStore();
 
@@ -143,9 +149,18 @@ function closeModal() {
 
 const onSubmit = async () => {
     try {
-        await productStore.createProduct(product.value);
-
-        closeModal();
+        product.value.loading = true;
+        await productStore.createProduct(product.value).then(() => {
+            product.value.loading = false;
+            closeModal();
+            product.value = {
+                id: "",
+                title: "",
+                price: "",
+                description: "",
+                image: null,
+            };
+        });
     } catch (error) {
         console.error("Error submitting form:", error);
     }

@@ -15,7 +15,13 @@ class Product extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'title', 'slug', 'description', 'price', 'image_mime, image_size'
+        'title',
+        'description',
+        'price',
+        'image',
+        'image_size',
+        'created_by',
+        'updated_by',
     ];
 
     public function getSlugOptions() : SlugOptions
