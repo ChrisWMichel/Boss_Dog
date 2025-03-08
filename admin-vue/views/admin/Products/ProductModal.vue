@@ -142,27 +142,44 @@ function closeModal() {
     emit("close");
 }
 
-// function updateImage(event) {
-//     console.log("updateImage:", event.target.files[0]);
-//     product.value.image = event.target.files[0];
-// }
-
 const onSubmit = async () => {
-    try {
-        product.value.loading = true;
-        await productStore.createProduct(product.value).then(() => {
+    product.value.loading = true;
+    if (product.value.id) {
+        await productStore
+            .updateProduct(product.value)
+            .then(() => {
+                product.value.loading = false;
+                closeModal();
+                console.log("Product updated successfully");
+                product.value = {
+                    id: "",
+                    title: "",
+                    price: "",
+                    description: "",
+                    image: null,
+                };
+            })
+            .catch((error) => {
+                console.error("Error updating product:", error);
+                product.value.loading = false;
+            });
+    } else {
+        try {
+            await productStore.createProduct(product.value).then(() => {
+                product.value.loading = false;
+                closeModal();
+                product.value = {
+                    id: "",
+                    title: "",
+                    price: "",
+                    description: "",
+                    image: null,
+                };
+            });
+        } catch (error) {
+            console.error("Error submitting form:", error);
             product.value.loading = false;
-            closeModal();
-            product.value = {
-                id: "",
-                title: "",
-                price: "",
-                description: "",
-                image: null,
-            };
-        });
-    } catch (error) {
-        console.error("Error submitting form:", error);
+        }
     }
 };
 

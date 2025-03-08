@@ -96,6 +96,8 @@ export const useProductStore = defineStore("products", () => {
 
     async function updateProduct(data) {
         const id = data.id;
+        const url = null;
+
         if (data.image instanceof File) {
             const form = new FormData();
             form.append("image", data.image);
@@ -108,34 +110,58 @@ export const useProductStore = defineStore("products", () => {
             data._method = "PUT";
         }
         try {
-            const response = await axiosClient.post(`/products/${id}`, data);
-            const index = products.value.data.findIndex(
-                (product) => product.id === data.id
-            );
-            products.value.data[index] = response.data;
-            sessionStorage.setItem(
-                "products",
-                JSON.stringify(products.value.data)
-            );
-            return response;
+            const response = await axiosClient.post(`/products/${id}`, data, {
+                headers: {
+                    "Content-Type":
+                        data instanceof FormData
+                            ? "multipart/form-data"
+                            : "application/json",
+                },
+            });
+
+            if (response && response.data) {
+                const index = products.value.data.data.findIndex(
+                    (product) => product.id === id
+                );
+                products.value.data.data[index] = response.data;
+                sessionStorage.setItem(
+                    "products",
+                    JSON.stringify(products.value.data.data)
+                );
+                toast.success("Product updated successfully"); // Corrected success message
+                this.getProducts({
+                    url,
+                    search: "",
+                    per_page: "10",
+                    sortField: "",
+                    sortDirection: "asc",
+                });
+            } else {
+                console.error("Unexpected response structure:", response);
+            }
         } catch (error) {
             console.error("Update product error:", error);
+            if (error.response && error.response.data) {
+                console.error("Error details:", error.response.data);
+            }
             toast.error("Error updating product");
             return;
         }
     }
 
     async function deleteProduct(id) {
+        const url = null;
         try {
             const response = await axiosClient.delete(`/products/${id}`);
-            products.value = products.value.data.filter(
-                (product) => product.id !== id
-            );
-            sessionStorage.setItem(
-                "products",
-                JSON.stringify(products.value.data)
-            );
-            return response;
+            // Refetch products to ensure state consistency
+            await getProducts({
+                url,
+                search: "",
+                per_page: "10",
+                sortField: "",
+                sortDirection: "asc",
+            });
+            toast.success("Product deleted successfully");
         } catch (error) {
             console.error("Delete product error:", error);
             toast.error("Error deleting product");

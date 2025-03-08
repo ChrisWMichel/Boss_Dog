@@ -10,7 +10,7 @@
         </button>
     </div>
     <modal-create v-model="showModal" :product="productModel" />
-    <product-table />
+    <product-table @clickEdit="editProduct" />
 </template>
 
 <script setup>
@@ -28,6 +28,11 @@ const productModel = ref({
 });
 
 const showProductModal = () => {
+    showModal.value = true;
+};
+
+const editProduct = (product) => {
+    productModel.value = product;
     showModal.value = true;
 };
 </script>

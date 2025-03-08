@@ -42,7 +42,7 @@
                     <tableSorting
                         field="image"
                         title="Image"
-                        class="cursor-auto hover:bg-transparent"
+                        class="hover:bg-transparent no-pointer"
                     >
                     </tableSorting>
                     <tableSorting
@@ -69,17 +69,15 @@
                         title="Updated At"
                     >
                     </tableSorting>
-                    <tableSorting field="actions"> Actions </tableSorting>
+                    <tableSorting
+                        field="actions"
+                        class="hover:bg-transparent no-pointer"
+                    >
+                        Actions
+                    </tableSorting>
                 </tr>
             </thead>
-            <tbody
-                v-if="
-                    products.loading ||
-                    !products.data ||
-                    !products.data.data ||
-                    !products.data.data.length
-                "
-            >
+            <tbody v-if="products.loading || !products.data.data.length">
                 <tr>
                     <td colspan="6">
                         <spinnerAppLayout v-if="products.loading" />
@@ -93,7 +91,7 @@
                 <tr
                     v-for="(product, index) of products.data.data"
                     :key="product.id"
-                    class="animate-fade-in-down even:bg-gray-100"
+                    class="even:bg-gray-100"
                     :style="{ 'animation-delay': index * 0.1 + 's' }"
                 >
                     <td class="p-2 border-b">{{ product.id }}</td>
@@ -113,7 +111,7 @@
                     <td class="p-2 border-b">
                         {{ product.updated_at }}
                     </td>
-                    <td class="p-2 border-b">
+                    <td class="relative p-2 border-b">
                         <Menu as="div" class="relative inline-block text-left">
                             <div>
                                 <MenuButton
@@ -135,7 +133,7 @@
                                 leave-to-class="transform scale-95 opacity-0"
                             >
                                 <MenuItems
-                                    class="absolute right-0 z-10 w-32 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                                    class="absolute right-0 w-32 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg custom-dropdown z-150 ring-1 ring-black ring-opacity-5 focus:outline-none"
                                 >
                                     <div class="px-1 py-1">
                                         <MenuItem v-slot="{ active }">
@@ -243,7 +241,7 @@ const sortField = ref("updated_at");
 const sortDirection = ref("asc");
 
 const showProductModal = ref(false);
-console.log("productTable.vue", products.value);
+
 const emit = defineEmits(["clickEdit"]);
 
 onMounted(() => {
@@ -313,4 +311,14 @@ function editProduct(p) {
 }
 </script>
 
-<style scoped></style>
+<style scoped>
+.no-pointer {
+    cursor: default;
+}
+.custom-dropdown {
+    z-index: 150;
+}
+.relative {
+    position: relative;
+}
+</style>

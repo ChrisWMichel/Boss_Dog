@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductRequest;
@@ -52,7 +52,6 @@ class ProductController extends Controller
         $image = $data['image'] ?? null;
         // Check if image was given and save on local file system
         if ($image) {
-            
             $relativePath = $this->saveImage($image);
             $data['image'] = $relativePath;
             $data['image_size'] = $image->getSize();
@@ -83,25 +82,32 @@ class ProductController extends Controller
      */
     public function update(ProductRequest $request, Product $product)
     {
+        // Fetch the product record from the database to get the old image path
+        $OldProduct = Product::findOrFail($product->id);
+        $oldImage = $OldProduct->image;
+
         $data = $request->validated();
         $data['updated_by'] = $request->user()->id;
 
         /** @var \Illuminate\Http\UploadedFile $image */
         $image = $data['image'] ?? null;
+
         // Check if image was given and save on local file system
         if ($image) {
             $relativePath = $this->saveImage($image);
-            $data['image'] = URL::to(Storage::url($relativePath));
-            $data['image_mime'] = $image->getClientMimeType();
+            $data['image'] = $relativePath; 
             $data['image_size'] = $image->getSize();
-
-            // If there is an old image, delete it
-            if ($product->image) {
-                Storage::deleteDirectory('/public/' . dirname($product->image));
-            }
         }
 
         $product->update($data);
+
+        if ($oldImage) {      
+            if (file_exists($oldImage)) {
+                unlink($oldImage);
+            } else {
+                Log::warning('Image not found: ', ['oldImage' => $oldImage]);
+            }
+        }
 
         return new ProductResource($product);
     }
@@ -121,9 +127,8 @@ class ProductController extends Controller
 
     private function saveImage(UploadedFile $image)
     {
-
         $image_name = time().'_'.$image->getClientOriginalName();
-        $image->storeAs('images/products',$image_name,'public');
+        $image->storeAs('images/products', $image_name, 'public');
         return 'storage/images/products/'.$image_name;
     }
 }
