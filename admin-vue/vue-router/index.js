@@ -1,6 +1,6 @@
 import { createWebHistory, createRouter } from "vue-router";
 
-import HomeView from "../views/HelloWorld.vue";
+import HomeView from "../views/Home.vue";
 import dashboard from "../views/admin/dashboard.vue";
 import login from "../views/auth/loginForm.vue";
 import RequestPassword from "../views/auth/RequestPassword.vue";
@@ -61,13 +61,15 @@ const routes = [
     },
     {
         path: "/:pathMatch(.*)*",
-        name: "not-found",
-        component: NotFound,
+        name: "NotFound",
+        beforeEnter() {
+            window.location = "/";
+        },
     },
 ];
 
 const router = createRouter({
-    history: createWebHistory(),
+    history: createWebHistory(import.meta.env.BASE_URL),
     routes,
 });
 

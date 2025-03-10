@@ -4,7 +4,7 @@ import "../../resources/js/bootstrap";
 import { createPinia } from "pinia";
 import Toast from "vue-toastification";
 import "vue-toastification/dist/index.css";
-import router from "../router";
+import router from "../vue-router";
 import App from "./App.vue";
 
 const pinia = createPinia();

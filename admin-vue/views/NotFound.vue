@@ -30,7 +30,7 @@
 </template>
 
 <script setup>
-import router from "../router";
+import router from "../vue-router";
 </script>
 
 <style scoped></style>

@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useUserStore } from "../store/useUserStore";
-import router from "../router";
+import router from "../vue-router";
 
 const axiosClient = axios.create({
     baseURL: `${import.meta.env.VITE_API_URL}/api`,

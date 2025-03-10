@@ -7,11 +7,19 @@ export default defineConfig({
         laravel({
             input: [
                 "resources/css/app.css",
+                "resources/js/app.js",
                 "admin-vue/src/style.css",
                 "admin-vue/src/main.js",
             ],
             refresh: true,
         }),
-        vue(),
+        vue({
+            template: {
+                transformAssetUrls: {
+                    base: null,
+                    includeAbsolute: false,
+                },
+            },
+        }),
     ],
 });

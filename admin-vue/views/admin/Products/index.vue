@@ -14,7 +14,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import productTable from "./productTable.vue";
 import modalCreate from "./ProductModal.vue";
 

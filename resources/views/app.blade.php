@@ -1,18 +1,17 @@
-<!doctype html>
-<html lang="en" class="h-full bg-gray-300">
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full">
   <head>
     <meta charset="UTF-8" />
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    {{-- <link rel="icon" type="image/svg+xml" href="/vite.svg" /> --}}
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Boss Dog</title>
-    @vite(['resources/css/app.css', 'admin-vue/src/style.css', 'admin-vue/src/main.js'])
-    <!-- Add CORS headers -->
-    <meta http-equiv="Access-Control-Allow-Origin" content="*">
-    <meta http-equiv="Access-Control-Allow-Methods" content="GET, POST, PUT, DELETE, OPTIONS">
-    <meta http-equiv="Access-Control-Allow-Headers" content="Content-Type, Authorization">
+    
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <title>{{ config('app.name', 'Laravel') }}</title>
+
+    <!-- Scripts -->
+    @vite(['resources/css/app.css', 'resources/js/app.js', 'admin-vue/src/style.css', 'admin-vue/src/main.js'])
   </head>
-  <body class="h-full">
-    <div id="app" class="h-full"></div>
+  <body class="h-full font-sans antialiased">
+    <div id="app"></div>
   </body>
 </html>

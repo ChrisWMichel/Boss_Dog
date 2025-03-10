@@ -2,17 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\ProductRequest;
-use App\Http\Resources\ProductListResource;
-use App\Http\Resources\ProductResource;
-use App\Models\Product;
-use Illuminate\Http\Request;
+use App\Models\Api\Product;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\URL;
-use Illuminate\Support\Str;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\ProductRequest;
+use App\Http\Resources\ProductResource;
+use App\Http\Resources\ProductListResource;
 
 class ProductController extends Controller
 {

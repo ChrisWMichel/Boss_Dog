@@ -221,7 +221,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, onBeforeMount } from "vue";
 import { useProductStore } from "../../../store/useProductStore";
 import spinnerAppLayout from "../../../src/components/core/spinnerAppLayout.vue";
 import tableSorting from "../../../src/components/core/Table/tableSorting.vue";
@@ -243,10 +243,15 @@ const sortDirection = ref("asc");
 const showProductModal = ref(false);
 
 const emit = defineEmits(["clickEdit"]);
-
-onMounted(() => {
-    getProducts();
-});
+getProducts();
+// onBeforeMount(() => {
+//     console.log("Mounted - productTable.vue");
+//     getProducts();
+// });
+// onMounted(() => {
+//     console.log("Mounted - productTable.vue");
+//     getProducts();
+// });
 
 function getForPage(ev, link) {
     ev.preventDefault();

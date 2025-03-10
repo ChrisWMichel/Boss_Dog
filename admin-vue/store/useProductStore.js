@@ -19,7 +19,7 @@ export const useProductStore = defineStore("products", () => {
     }) {
         products.value.loading = true;
         url = url || "/products";
-
+        //console.log("Get products");
         try {
             const response = await axiosClient.get(url, {
                 params: {
