@@ -3,6 +3,8 @@ import "./bootstrap";
 import Alpine from "alpinejs";
 import persist from "@alpinejs/persist";
 import collapse from "@alpinejs/collapse";
+//import axios from "axios";
+import { get, post, request } from "./http.js";
 
 Alpine.plugin(persist);
 Alpine.plugin(collapse);
@@ -17,7 +19,7 @@ document.addEventListener("alpine:init", () => {
             return this.watchingItems.length;
         },
         get cartItems() {
-            return Object.values(this.cartItemsObject).reduce(
+            return Object.values(this.cartItemsObject || {}).reduce(
                 (accum, next) => accum + parseInt(next.quantity),
                 0
             );
@@ -70,10 +72,10 @@ document.addEventListener("alpine:init", () => {
         return {
             id: product.id,
             product,
-            quantity: 1,
             get watchlistItems() {
                 return this.$store.watchlistItems;
             },
+
             addToWatchlist() {
                 if (this.isInWatchlist()) {
                     this.$store.header.watchingItems.splice(
@@ -97,29 +99,77 @@ document.addEventListener("alpine:init", () => {
                     (p) => p.id === product.id
                 );
             },
-            addToCart(id, quantity = 1) {
-                this.$store.header.cartItemsObject[id] = this.$store.header
-                    .cartItemsObject[id] || { ...product, quantity: 0 };
-                this.$store.header.cartItemsObject[id].quantity =
-                    parseInt(this.$store.header.cartItemsObject[id].quantity) +
-                    parseInt(quantity);
-                this.$dispatch("notify", {
-                    message: "The item was added into the cart",
-                });
+            addToCart(quantity = 1) {
+                post(this.product.addToCartUrl, { quantity })
+                    .then((response) => {
+                        this.$store.header.cartItemsObject[this.product.id] = {
+                            ...this.product,
+                            quantity:
+                                (this.$store.header.cartItemsObject[
+                                    this.product.id
+                                ]?.quantity || 0) + quantity,
+                        };
+                        this.$dispatch("cart-change", {
+                            count: response.count,
+                        });
+                        this.$dispatch("notify", {
+                            message: "The item was added into the cart",
+                        });
+                    })
+                    .catch((response) => {
+                        console.log(response);
+                        this.$dispatch("notify", {
+                            message:
+                                response.message ||
+                                "Server Error. Please try again.",
+                            type: "error",
+                        });
+                    });
             },
             removeItemFromCart() {
-                delete this.$store.header.cartItemsObject[this.id];
-                this.$dispatch("notify", {
-                    message: "The item was removed from cart",
-                });
+                console.log("removeItemFromCart called");
+                post(this.product.removeUrl)
+                    .then((response) => {
+                        this.$dispatch("notify", {
+                            message: "The item was removed from cart",
+                        });
+                        this.$dispatch("cart-change", {
+                            count: response.count,
+                        });
+                        this.cartItems = this.cartItems.filter(
+                            (p) => p.id !== product.id
+                        );
+                        console.log("The item was removed from cart");
+                        // this.$dispatch("notify", {
+                        //     message: "The item was removed from cart",
+                        // });
+                    })
+                    .catch((response) => {
+                        console.error(
+                            "Error removing item from cart:",
+                            response
+                        ); // Debugging statement
+                    });
             },
-            removeFromWatchlist() {
-                this.$store.header.watchingItems.splice(
-                    this.$store.header.watchingItems.findIndex(
-                        (p) => p.id === this.id
-                    ),
-                    1
-                );
+            changeQuantity() {
+                post(this.product.updateQuantityUrl, {
+                    quantity: product.quantity,
+                }).then((response) => {
+                    if (!this.$store.header.cartItemsObject[this.product.id]) {
+                        this.$store.header.cartItemsObject[this.product.id] =
+                            {};
+                    }
+                    console.log("changeQuantity");
+                    this.$store.header.cartItemsObject[
+                        this.product.id
+                    ].quantity = product.quantity;
+                    this.$dispatch("cart-change", {
+                        count: response.count,
+                    });
+                    this.$dispatch("notify", {
+                        message: "The quantity was updated",
+                    });
+                });
             },
         };
     });

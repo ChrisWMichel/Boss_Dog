@@ -20,7 +20,13 @@ return Application::configure(basePath: dirname(__DIR__))
 
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias(['sanctum' => EnsureFrontendRequestsAreStateful::class]);
-        $middleware->alias(['admin' => AdminMiddleware::class]);
+        $middleware->alias(
+            [
+                'admin' => AdminMiddleware::class,
+                'guestOrVerified' => \App\Http\Middleware\GuestOrVerified::class,
+                ]
+        );
+
         
        // $middleware->alias(['cors' => CorsMiddleware::class]);
        // $middleware->alias(['session' => StartSession::class]);
