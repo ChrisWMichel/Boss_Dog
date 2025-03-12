@@ -7,7 +7,7 @@
         'price' => $product->price,
         'quantity' => $product->quantity,
         'addToCartUrl' => route('cart.add', $product),
-    ]) }})" class="container mx-auto">
+    ]) }})" class="container mx-auto !mt-20">
         <div class="grid grid-cols-1 gap-6 lg:grid-cols-5">
             <div class="lg:col-span-3">
 

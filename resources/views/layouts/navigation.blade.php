@@ -2,7 +2,7 @@
     mobileMenuOpen: false,
     cartItemsCount: {{ \App\Http\Helpers\Cart::getCartItemsCount() }},
 }" @cart-change.window="cartItemsCount = $event.detail.count"
-    class="flex justify-between text-white shadow-md bg-slate-800">
+    class="fixed top-0 left-0 right-0 z-50 flex justify-between text-white shadow-md bg-slate-800">
     <div>
         <a href="{{ route('home.front') }}" class="block pt-2 pl-5">
             <img src="{{ asset('images/projectLogo-small.png') }}" alt="Logo" class="h-14" />
@@ -55,7 +55,7 @@
                     </a>
                     <ul x-show="open" x-transition class="right-0 z-10 py-2 bg-slate-800">
                         <li>
-                            <a href="/src/profile.html" class="flex px-3 py-2 hover:bg-slate-900">
+                            <a href="{{ route('profile.view') }}" class="flex px-3 py-2 hover:bg-slate-900">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none"
                                     viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -148,7 +148,7 @@
                     <ul @click.outside="open = false" x-show="open" x-transition x-cloak
                         class="absolute right-0 z-10 w-48 py-2 bg-slate-800">
                         <li>
-                            <a href="/src/profile.html" class="flex px-3 py-2 hover:bg-slate-900">
+                            <a href="{{ route('profile.view') }}" class="flex px-3 py-2 hover:bg-slate-900">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 mr-2" fill="none"
                                     viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                     <path stroke-linecap="round" stroke-linejoin="round"

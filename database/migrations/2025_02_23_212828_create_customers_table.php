@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('first_name');
             $table->string('last_name');
             $table->string('phone')->nullable();
-            $table->string('status');
+            $table->string('status')->nullable();
             $table->foreignIdFor(User::class, 'created_by')->nullable()->cascadeOnDelete();
             $table->foreignIdFor(User::class, 'updated_by')->nullable()->cascadeOnDelete();
         });

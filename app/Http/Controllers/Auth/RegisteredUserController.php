@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Models\User;
+use App\Models\Customer;
 use Illuminate\View\View;
 use App\Http\Helpers\Cart;
 use Illuminate\Http\Request;
@@ -49,11 +50,17 @@ class RegisteredUserController extends Controller
 
             event(new Registered($user));
 
+            $customer = new Customer();
+            $customer->user_id = $user->id;
+            $customer->first_name = $user->firstname;
+            $customer->last_name = $user->lastname;
+            $customer->save();
+
             Auth::login($user);
 
             Cart::moveCartItemsIntoDb();
 
-            return redirect(route('dashboard', absolute: false));
+            return redirect(route('home.front', absolute: false));
         } catch (\Exception $e) {
             Log::error('Error in store method', ['exception' => $e->getMessage()]);
             return redirect()->back()->withErrors(['error' => 'Registration failed. Please try again.']);

@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="grid gap-8 p-5 grig-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+    <div class="grid gap-8 p-5 mt-20 grig-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         @foreach ($products ?? [] as $product)
             <div x-data="productItem({{ json_encode([
                 'id' => $product->id,
