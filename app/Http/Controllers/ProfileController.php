@@ -90,6 +90,19 @@ class ProfileController extends Controller
         return redirect()->route('profile.view')->with('flash_message', 'Profile was successfully updated.');
     }
 
+    public function updatePassword(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'current_password' => ['required', 'current_password'],
+            'new_password' => ['required', 'string', 'min:8', 'confirmed'],
+        ]);
+
+        $request->user()->update([
+            'password' => bcrypt($request->password),
+        ]);
+
+        return Redirect::route('profile.view')->with('flash_message', 'Password was successfully updated.');
+    }
     /** Update user with verified email */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {

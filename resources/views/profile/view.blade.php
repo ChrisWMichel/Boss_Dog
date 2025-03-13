@@ -188,23 +188,31 @@
                     </form>
                 </div>
                 <div class="col-span-2 p-4 bg-white rounded-lg shadow">
-                    <h2 class="mb-5 text-xl">Your Account</h2>
-                    <div class="mb-4">
-                        <input type="password" name="password" placeholder="Your Current password"
-                            class="w-full border-gray-300 rounded-md focus:border-purple-500 focus:outline-none focus:ring-purple-500" />
-                    </div>
-                    <div class="mb-4">
-                        <input type="password" name="password" placeholder="New password"
-                            class="w-full border-gray-300 rounded-md focus:border-purple-500 focus:outline-none focus:ring-purple-500" />
-                    </div>
-                    <div class="mb-4">
-                        <input type="password" name="password" placeholder="Repeat new password"
-                            class="w-full border-gray-300 rounded-md focus:border-purple-500 focus:outline-none focus:ring-purple-500" />
-                    </div>
-                    <div>
-                        <button
-                            class="btn-primary bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700">Update</button>
-                    </div>
+                    <h2 class="mb-5 text-xl">Update Password</h2>
+                    <form method="POST" action="{{ route('profile.update.password') }}">
+                        @csrf
+                        <div class="mb-4">
+                            <x-input type="password" name="current_password" placeholder="Your Current password"
+                                class="w-full border-gray-300 rounded-md focus:border-purple-500 focus:outline-none focus:ring-purple-500" />
+                        </div>
+                        <div class="mb-4">
+                            <x-input type="password" name="new_password" placeholder="New password"
+                                class="w-full border-gray-300 rounded-md focus:border-purple-500 focus:outline-none focus:ring-purple-500" />
+                        </div>
+                        <div class="mb-4">
+                            <x-input type="password" name="new_password_confirmation"
+                                placeholder="Repeat new password"
+                                class="w-full border-gray-300 rounded-md focus:border-purple-500 focus:outline-none focus:ring-purple-500" />
+                        </div>
+                        <div>
+                            <x-primary-button
+                                class="btn-primary bg-emerald-500 hover:bg-emerald-600 active:bg-emerald-700">
+                                {{ __('Reset Password') }}
+                            </x-primary-button>
+
+                        </div>
+                    </form>
+
                 </div>
             </div>
         </div>

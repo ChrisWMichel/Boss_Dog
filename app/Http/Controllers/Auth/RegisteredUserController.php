@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Foundation\Support\Providers\RouteServiceProvider;
 
 class RegisteredUserController extends Controller
 {
@@ -60,7 +61,8 @@ class RegisteredUserController extends Controller
 
             Cart::moveCartItemsIntoDb();
 
-            return redirect(route('home.front', absolute: false));
+            return redirect(route('verification.notice', absolute: false));
+            
         } catch (\Exception $e) {
             Log::error('Error in store method', ['exception' => $e->getMessage()]);
             return redirect()->back()->withErrors(['error' => 'Registration failed. Please try again.']);
