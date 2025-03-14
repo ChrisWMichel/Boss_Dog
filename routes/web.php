@@ -1,10 +1,11 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CartController;
-use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CheckoutController;
 
 Route::middleware(['guestOrVerified'])->group(function (){
 
@@ -33,8 +34,13 @@ Route::middleware('auth', 'verified')->group(function () {
     Route::get('/profile/view', [ProfileController::class, 'view'])->name('profile.view');
 
     Route::post('/checkout', [CheckoutController::class, 'checkout'])->name('cart.checkout');
+    Route::post('/checkout/{order}', [CheckoutController::class, 'checkoutOrder'])->name('cart.checkout-order');
     Route::get('/checkout/success', [CheckoutController::class, 'success'])->name('checkout.success');
     Route::get('/checkout/failure', [CheckoutController::class, 'failure'])->name('checkout.failure');
+
+    Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::get('/orders/view/{order}', [OrderController::class, 'view'])->name('orders.view');
+    //Route::post('/orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
 });
 
 require __DIR__.'/auth.php';
