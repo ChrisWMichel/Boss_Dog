@@ -19,6 +19,7 @@ return new class extends Migration
             $table->decimal('amount', 8, 2);
             $table->string('status');
             $table->string('type');
+            $table->string('session_id')->nullable();
             $table->foreignIdFor(User::class, 'created_by')->nullable()->cascadeOnDelete();
             $table->foreignIdFor(User::class, 'updated_by')->nullable()->cascadeOnDelete();
         });

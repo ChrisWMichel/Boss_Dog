@@ -2,8 +2,9 @@
 
 namespace App\Http\Helpers;
 
-use App\Models\CartItem;
 use App\Models\Product;
+use App\Models\CartItem;
+use Illuminate\Support\Arr;
 
 class Cart
 {
@@ -29,7 +30,8 @@ class Cart
             return CartItem::where('user_id', $user->id)->get()->map(
                 fn($item) => [
                     'product_id' => $item->product_id,
-                    'quantity' => $item->quantity
+                    'quantity' => $item->quantity,
+                    'price' => $item->product->price,
                 ]
             );
         } else {
@@ -80,5 +82,13 @@ class Cart
             CartItem::insert($newCartItems);
         }
         //$request->cookie('cart_items', json_encode([]), 60 * 24 * 30);
+    }
+
+    public static function getProductsAndCartItems(){
+        $cartItems = Cart::getCartItems() ?? [];
+        $ids = Arr::pluck($cartItems, 'product_id');
+        $products = Product::query()->whereIn('id', $ids)->get();
+        $cartItems = Arr::keyBy($cartItems, 'product_id');
+        return [$products, $cartItems];
     }
 }

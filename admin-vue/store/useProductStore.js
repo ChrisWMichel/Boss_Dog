@@ -31,11 +31,18 @@ export const useProductStore = defineStore("products", () => {
             });
             //console.log("Get products response:", response.data);
 
-            products.value.data = response.data;
-            sessionStorage.setItem(
-                "products",
-                JSON.stringify(products.value.data)
-            );
+            if (response && response.data) {
+                products.value.data = response.data;
+                sessionStorage.setItem(
+                    "products",
+                    JSON.stringify(products.value.data)
+                );
+            } else {
+                console.error("Unexpected response structure:", response);
+                toast.error(
+                    "Error getting products: Unexpected response structure. Logout and login again."
+                );
+            }
             return response;
         } catch (error) {
             console.error("Get products error:", error);
