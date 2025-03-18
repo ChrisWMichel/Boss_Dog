@@ -150,7 +150,6 @@ const onSubmit = async () => {
             .then(() => {
                 product.value.loading = false;
                 closeModal();
-                console.log("Product updated successfully");
                 product.value = {
                     id: "",
                     title: "",

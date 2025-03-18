@@ -19,12 +19,12 @@
             </div>
         </router-link>
         <router-link
-            :to="{ name: 'app.dashboard' }"
+            :to="{ name: 'app.orders' }"
             class="w-full no-underline transition-colors rounded text-slate-200 hover:bg-white/65"
         >
             <div class="flex w-full gap-2 py-3 ml-5 justify-left">
-                <span class="w-6 h-6"><UserIcon /></span>
-                <span>Users</span>
+                <span class="w-6 h-6"><ShoppingBagIcon /></span>
+                <span>Orders</span>
             </div>
         </router-link>
         <router-link
@@ -46,6 +46,7 @@ import {
     UserIcon,
     ListBulletIcon,
     ChartBarIcon,
+    ShoppingBagIcon,
 } from "@heroicons/vue/24/solid";
 //
 </script>

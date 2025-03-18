@@ -8,7 +8,9 @@ import resetPassword from "../views/auth/resetPassword.vue";
 import AppLayout from "../src/components/Layouts/AppLayout.vue";
 import Products from "../views/admin/Products/index.vue";
 import { useUserStore } from "../store/useUserStore";
-import NotFound from "../views/NotFound.vue";
+import Orders from "../views/admin/Orders/index.vue";
+import OrderView from "../views/admin/Orders/orderView.vue";
+//import NotFound from "../views/NotFound.vue";
 
 const routes = [
     {
@@ -26,6 +28,16 @@ const routes = [
                 path: "products",
                 name: "app.products",
                 component: Products,
+            },
+            {
+                path: "orders",
+                name: "app.orders",
+                component: Orders,
+            },
+            {
+                path: "orders/:id",
+                name: "app.order.view",
+                component: OrderView,
             },
         ],
     },

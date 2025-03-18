@@ -244,14 +244,6 @@ const showProductModal = ref(false);
 
 const emit = defineEmits(["clickEdit"]);
 getProducts();
-// onBeforeMount(() => {
-//     console.log("Mounted - productTable.vue");
-//     getProducts();
-// });
-// onMounted(() => {
-//     console.log("Mounted - productTable.vue");
-//     getProducts();
-// });
 
 function getForPage(ev, link) {
     ev.preventDefault();
