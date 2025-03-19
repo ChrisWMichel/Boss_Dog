@@ -24,6 +24,11 @@ class Order extends Model
         return Carbon::parse($value)->diffForHumans();
     }
 
+    public function getFormattedCreatedAtAttribute()
+{
+    return Carbon::parse($this->attributes['created_at'])->diffForHumans();
+}
+
     public function items ()
     {
         return $this->hasMany(OrderItem::class);

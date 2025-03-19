@@ -181,7 +181,7 @@ onMounted(async () => {
             orderStatus.value = response.data;
             //console.log("Order statuses loaded:", orderStatus.value);
         });
-        console.log("Order loaded:", order.value);
+        // console.log("Order loaded:", order.value);
     } catch (error) {
         console.error("Failed to load order:", error);
     } finally {

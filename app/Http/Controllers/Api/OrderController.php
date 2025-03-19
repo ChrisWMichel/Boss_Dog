@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\OrderResource;
 use App\Http\Resources\OrderListResource;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class OrderController extends Controller
 {
@@ -51,6 +53,9 @@ class OrderController extends Controller
         $order->status = $status;
         $order->save();
 
+        Mail::to($order->user->email)->send(new \App\Mail\OrderUpdateEmail($order));
+
         return response()->json(['message' => 'Order status updated successfully']);
+
     }
 }

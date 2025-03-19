@@ -7,10 +7,11 @@ use App\Models\User;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Models\CartItem;
+use App\Models\OrderItem;
 use App\Enums\OrderStatus;
 use App\Http\Helpers\Cart;
+use App\Mail\NewOrderEmail;
 use App\Enums\PaymentStatus;
-use App\Models\OrderItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -45,6 +46,14 @@ class CheckoutController extends Controller
             Log::error('FAILURE-FAILURE-FAILURE', ['message' => json_encode($e->getMessage())]);
             return view('checkout.failure', ['message' => $e->getMessage()]);
         }
+
+        $adminUsers = User::where('is_admin', true)->get();
+        // For admin users
+        foreach($adminUsers as $admin){
+            Mail::to($admin->email)->send(new NewOrderEmail($order, true));
+        }
+        // For customer
+    Mail::to($user->email)->send(new NewOrderEmail($order, false));
         
         $customer = $user->firstname;
         
@@ -57,8 +66,8 @@ class CheckoutController extends Controller
     }
 
     public function checkout(Request $request){
- /** @var \App\Models\User $user */
- $user = $request->user();
+    /** @var \App\Models\User $user */
+        $user = $request->user();
 
         $stripeSecretKey = config('app.STRIPE_SECRET_KEY');
         if (!$stripeSecretKey) {
@@ -136,35 +145,6 @@ class CheckoutController extends Controller
           return redirect($checkout_session->url);
     }
     
-    // private function updateOrderAndSession(Payment $payment)
-    // {
-    //     DB::beginTransaction();
-    //     try {
-    //         $payment->status = PaymentStatus::Paid->value;
-    //         $payment->update();
-
-    //         $order = $payment->order;
-
-    //         $order->status = OrderStatus::Paid->value;
-    //         $order->update();
-    //     } catch (\Exception $e) {
-    //         DB::rollBack();
-    //         Log::critical(__METHOD__ . ' method does not work. '. $e->getMessage());
-    //         throw $e;
-    //     }
-
-    //     DB::commit();
-
-    //     try {
-    //         $adminUsers = User::where('is_admin', 1)->get();
-
-    //          foreach ([...$adminUsers, $order->user] as $user) {
-    //              Mail::to($user)->send(new NewOrderEmail($order, (bool)$user->is_admin));
-    //          }
-    //     } catch (\Exception $e) {
-    //         Log::critical('Sending email failed. '. $e->getMessage());
-    //     }
-    // }
 
     public function checkoutOrder(Order $order, Request $request)
     {
@@ -184,8 +164,6 @@ class CheckoutController extends Controller
             ];
         }
 
-        //$stripe = new \Stripe\StripeClient(config('app.STRIPE_SECRET_KEY'));
-        //$session = $stripe->checkout->sessions->retrieve($sessionId);
         \Stripe\Stripe::setApiKey(config('app.STRIPE_SECRET_KEY'));
 
         $session = \Stripe\Checkout\Session::create([
