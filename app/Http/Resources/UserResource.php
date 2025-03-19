@@ -19,7 +19,10 @@ class UserResource extends JsonResource
             'firstname' => $this->firstname,
             'lastname' => $this->lastname,
             'email' => $this->email,
-            'created_at' => $this->created_at,
+            'updated_at' => $this->formatted_updated_at,
+            'created_at' => $this->formatted_created_at, 
+            'is_admin' => $this->is_admin,
+            'password' => $this->password,
         ];
     }
 }

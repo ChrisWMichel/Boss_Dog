@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\OrderController as ApiOrderController;
 use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\UserController;
 
 Route::middleware(['auth:sanctum', 'admin'])
     ->group(function () {
@@ -13,6 +14,7 @@ Route::middleware(['auth:sanctum', 'admin'])
         Route::post('/logout', [AuthController::class, 'logout']);
 
         Route::apiResource('/products', ProductController::class);
+        Route::apiResource('/users', UserController::class);
         Route::get('/orders', [ApiOrderController::class, 'index']);
         Route::get('/orders/statuses', [ApiOrderController::class, 'getStatuses']);
         Route::post('/orders/update-status/{order}/{status}', [ApiOrderController::class, 'updateStatus']);

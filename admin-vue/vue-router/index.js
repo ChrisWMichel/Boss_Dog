@@ -10,6 +10,7 @@ import Products from "../views/admin/Products/index.vue";
 import { useUserStore } from "../store/useUserStore";
 import Orders from "../views/admin/Orders/index.vue";
 import OrderView from "../views/admin/Orders/orderView.vue";
+import Users from "../views/admin/Users/index.vue";
 //import NotFound from "../views/NotFound.vue";
 
 const routes = [
@@ -38,6 +39,11 @@ const routes = [
                 path: "orders/:id",
                 name: "app.order.view",
                 component: OrderView,
+            },
+            {
+                path: "users",
+                name: "app.users",
+                component: Users,
             },
         ],
     },

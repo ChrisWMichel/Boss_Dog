@@ -18,6 +18,16 @@
                     @input="updateValue"
                 ></textarea>
             </template>
+            <template v-else-if="type === 'checkbox'">
+                <input
+                    type="checkbox"
+                    :checked="modelValue"
+                    :name="name"
+                    :required="required"
+                    :class="checkboxClasses"
+                    @change="updateCheckbox"
+                />
+            </template>
             <template v-else-if="type === 'file'">
                 <input
                     type="file"
@@ -54,7 +64,7 @@
 import { computed } from "vue";
 
 const props = defineProps({
-    modelValue: [String, Number, File],
+    modelValue: [String, Number, File, Boolean],
     type: {
         type: String,
         default: "text",
@@ -98,6 +108,14 @@ const updateValue = (event) => {
 
 const updateFile = (event) => {
     emit("update:modelValue", event.target.files[0]);
+};
+
+const checkboxClasses = computed(() => {
+    return "h-4 w-4 mr-2 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded";
+});
+
+const updateCheckbox = (event) => {
+    emit("update:modelValue", event.target.checked);
 };
 </script>
 
