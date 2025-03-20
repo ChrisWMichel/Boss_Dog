@@ -117,6 +117,11 @@ const checkboxClasses = computed(() => {
 const updateCheckbox = (event) => {
     emit("update:modelValue", event.target.checked);
 };
+
+const id = computed(() => {
+    if(props.id) return props.id
+    return `${props.name}-${Math.floor(1000000 + Math.random() * 10000000)}`
+});
 </script>
 
 <style scoped></style>

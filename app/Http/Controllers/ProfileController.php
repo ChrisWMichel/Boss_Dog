@@ -24,8 +24,22 @@ class ProfileController extends Controller
 
         /** @var \App\Models\Customer $customer */
         $customer = $user->customer;
-        $shippingAddress = $customer->shippingAddress ?: new CustomerAddress(['type' => AddressType::Shipping]);
-        $billingAddress = $customer->billingAddress ?: new CustomerAddress(['type' => AddressType::Billing]);
+
+        if (!$customer) {
+            $customer = \App\Models\Customer::create([
+                'user_id' => $user->id,
+                'first_name' => $user->name ?? '',
+                'last_name' => '',
+                'phone' => '',
+                'status' => 'active',
+            ]);
+            
+            // Refresh user to load the new customer relationship
+            $user->refresh();
+        }
+    
+    $shippingAddress = $customer->shippingAddress ?: new CustomerAddress(['type' => AddressType::Shipping]);
+    $billingAddress = $customer->billingAddress ?: new CustomerAddress(['type' => AddressType::Billing]);
         
         /** @var \Illuminate\Database\Eloquent\Collection $countries */
         $countries = Country::query()->orderBy('name')->get();

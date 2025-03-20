@@ -70,12 +70,32 @@
                             Shipping and taxes calculated at checkout.
                         </p>
 
-                        <form action="{{ route('cart.checkout') }}" method="post">
-                            @csrf
-                            <button type="submit" class="w-full py-3 text-lg btn-primary">
-                                Proceed to Checkout
-                            </button>
-                        </form>
+                        @if (auth()->check() &&
+                                auth()->user()->customer &&
+                                auth()->user()->customer->billingAddress &&
+                                auth()->user()->customer->shippingAddress)
+                            <form action="{{ route('cart.checkout') }}" method="post">
+                                @csrf
+                                <button type="submit" class="w-full py-3 text-lg btn-primary">
+                                    Proceed to Checkout
+                                </button>
+                            </form>
+                        @elseif (!auth()->check())
+                            <a href="{{ route('login') }}" class="block w-full py-3 text-lg text-center btn-primary">
+                                Login
+                            </a>
+                            <p class="mt-2 text-sm text-center text-red-500">
+                                Please login before checking out.
+                            </p>
+                        @else
+                            <a href="{{ route('profile.view') }}"
+                                class="block w-full py-3 text-lg text-center btn-primary">
+                                Complete Profile to Checkout
+                            </a>
+                            <p class="mt-2 text-sm text-center text-red-500">
+                                Please add shipping and billing addresses before checkout
+                            </p>
+                        @endif
                     </div>
                 </div>
                 <!--/ Product Items -->

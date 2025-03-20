@@ -11,6 +11,7 @@ import { useUserStore } from "../store/useUserStore";
 import Orders from "../views/admin/Orders/index.vue";
 import OrderView from "../views/admin/Orders/orderView.vue";
 import Users from "../views/admin/Users/index.vue";
+import Customers from "../views/admin/Customers/index.vue";
 //import NotFound from "../views/NotFound.vue";
 
 const routes = [
@@ -44,6 +45,11 @@ const routes = [
                 path: "users",
                 name: "app.users",
                 component: Users,
+            },
+            {
+                path: "customers",
+                name: "app.customers",
+                component: Customers,
             },
         ],
     },

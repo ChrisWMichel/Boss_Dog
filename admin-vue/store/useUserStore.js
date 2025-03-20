@@ -171,12 +171,27 @@ export const useUserStore = defineStore("user", () => {
         }
     }
 
-    const getUser = computed(() => user.value.data);
+    async function deleteUser(id) {
+        const url = null;
+        try {
+            const response = await axiosClient.delete(`/users/${id}`);
+            // Refetch users to ensure state consistency
+            await getUsers({
+                url,
+                search: "",
+                per_page: "10",
+                sortField: "",
+                sortDirection: "asc",
+            });
+            toast.success("user deleted successfully");
+        } catch (error) {
+            console.error("Delete user error:", error);
+            toast.error("Error deleting user");
+            return;
+        }
+    }
 
-    // const doubleCount = computed(() => count.value * 2);
-    // function increment() {
-    //     count.value++;
-    // }
+    const getUser = computed(() => user.value.data);
 
     return {
         user,
@@ -188,5 +203,6 @@ export const useUserStore = defineStore("user", () => {
         getUsers,
         updateUser,
         createUser,
+        deleteUser,
     };
 });

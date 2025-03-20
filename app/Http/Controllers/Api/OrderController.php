@@ -22,9 +22,17 @@ class OrderController extends Controller
         $sortDirection = request('sortDirection', 'asc');
 
         $query = Order::query()
-            ->where('id', 'like', "%{$search}%")
             ->orderBy($sortField, $sortDirection)
             ->paginate($perPage);
+
+        if (!empty($search)) {
+            $query->where(function($q) use ($search) {
+                $q->where('first_name', 'like', "%{$search}%")
+                    ->orWhere('last_name', 'like', "%{$search}%")
+                    ->orWhere('id', 'like', "%{$search}%")
+                    ->orWhere('status', 'like', "%{$search}%");
+            });
+        }
 
         return OrderListResource::collection($query);
     }

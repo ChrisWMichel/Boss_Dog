@@ -40,6 +40,7 @@ class UserController extends Controller
     {
         $data = $request->validated();
         $data['password'] = bcrypt($data['password']);
+        $data['email_verified_at'] = now();
         $data['created_by'] = $request->user()->id;
         $data['updated_by'] = $request->user()->id;
 
@@ -65,8 +66,12 @@ class UserController extends Controller
         if (isset($data['password']) && !empty($data['password'])) {
             $data['password'] = bcrypt($data['password']);
         } else {
-            // Remove password from the data array if it's empty or not provided
             unset($data['password']);
+        }
+        if (isset($data['is_admin'])) {
+            $data['is_admin'] = (bool)$data['is_admin'];
+        } else {
+            unset($data['is_admin']);
         }
         $data['updated_by'] = $request->user()->id;
 

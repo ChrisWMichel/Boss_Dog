@@ -69,6 +69,12 @@ class CheckoutController extends Controller
     /** @var \App\Models\User $user */
         $user = $request->user();
 
+        // Check if user has both shipping and billing addresses
+    // if (!$user->customer || !$user->customer->shippingAddress || !$user->customer->billingAddress) {
+    //     return redirect()->route('profile.view')
+    //         ->with('error', 'Please complete your shipping and billing information before checkout');
+    // }
+
         $stripeSecretKey = config('app.STRIPE_SECRET_KEY');
         if (!$stripeSecretKey) {
             throw new \Exception('Stripe secret key is not set.');

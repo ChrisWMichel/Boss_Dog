@@ -24,7 +24,7 @@
                     v-model="search"
                     @change="getOrders(null)"
                     class="relative block w-48 px-3 py-2 text-gray-900 placeholder-gray-500 border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                    placeholder="Search by ID"
+                    placeholder="Search..."
                 />
             </div>
         </div>
