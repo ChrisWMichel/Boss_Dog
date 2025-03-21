@@ -265,7 +265,7 @@ const customers = computed(() => customerStore.customers);
 const sortField = ref("updated_at");
 const sortDirection = ref("asc");
 
-console.log("customers:", customers.value.data);
+//console.log("customers:", customers.value.data);
 
 const showCustomerModal = ref(false);
 

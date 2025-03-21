@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Country;
 use Illuminate\View\View;
 use App\Enums\AddressType;
 use Illuminate\Http\Request;
@@ -14,6 +13,7 @@ use App\Http\Requests\ProfileRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Services\CountryService;
 
 class ProfileController extends Controller
 {
@@ -41,8 +41,9 @@ class ProfileController extends Controller
     $shippingAddress = $customer->shippingAddress ?: new CustomerAddress(['type' => AddressType::Shipping]);
     $billingAddress = $customer->billingAddress ?: new CustomerAddress(['type' => AddressType::Billing]);
         
-        /** @var \Illuminate\Database\Eloquent\Collection $countries */
-        $countries = Country::query()->orderBy('name')->get();
+        /** @var \App\Services\CountryService $countryService */
+    $countryService = app(CountryService::class);
+    $countries = $countryService->getCountries();
 
         return view('profile.view', compact('user', 'customer', 'shippingAddress', 'billingAddress', 'countries'));
     }

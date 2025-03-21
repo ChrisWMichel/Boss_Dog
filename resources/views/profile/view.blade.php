@@ -11,7 +11,7 @@
                             'address2' => old('billing.address2', $billingAddress->address2),
                             'city' => old('billing.city', $billingAddress->city),
                             'state' => old('billing.state', $billingAddress->state),
-                            'country_code' => old('billing.country_code', $billingAddress->country_code),
+                            'country_code' => old('billing.country_code', $billingAddress->country_code) ?: 'US',
                             'zip_code' => old('billing.zip_code', $billingAddress->zip_code),
                         ]) }},
                         shippingAddress: {{ json_encode([
@@ -19,23 +19,49 @@
                             'address2' => old('shipping.address2', $shippingAddress->address2),
                             'city' => old('shipping.city', $shippingAddress->city),
                             'state' => old('shipping.state', $shippingAddress->state),
-                            'country_code' => old('shipping.country_code', $shippingAddress->country_code),
+                            'country_code' => old('shipping.country_code', $shippingAddress->country_code) ?: 'US',
                             'zip_code' => old('shipping.zip_code', $shippingAddress->zip_code),
                         ]) }},
-                        get billingCountryStates() {
-                            const country = this.countries.find(country => country.code === this.billingAddress.country_code);
-                            if (country && country.states) {
-                                return JSON.parse(country.states);
+                        billingCountryStates: null,
+                        shippingCountryStates: null,
+                    
+                        async fetchStates(countryCode, addressType) {
+                            if (!countryCode) {
+                                this[addressType + 'CountryStates'] = null;
+                                return;
                             }
-                            return null;
-                        },
-                        get shippingCountryStates() {
-                            const country = this.countries.find(country => country.code === this.shippingAddress.country_code);
-                            if (country && country.states) {
-                                return JSON.parse(country.states);
+                    
+                            try {
+                                const response = await fetch(`/api/countries/${countryCode}/states`);
+                                const states = await response.json();
+                                this[addressType + 'CountryStates'] = Object.keys(states).length > 0 ? states : null;
+                            } catch (error) {
+                                console.error('Error fetching states:', error);
+                                this[addressType + 'CountryStates'] = null;
                             }
-                            return null;
                         },
+                    
+                        init() {
+                            // Set default country if not set
+                            if (!this.billingAddress.country_code) {
+                                this.billingAddress.country_code = 'US';
+                            }
+                            if (!this.shippingAddress.country_code) {
+                                this.shippingAddress.country_code = 'US';
+                            }
+                    
+                            this.$watch('billingAddress.country_code', (value) => {
+                                this.fetchStates(value, 'billing');
+                            });
+                    
+                            this.$watch('shippingAddress.country_code', (value) => {
+                                this.fetchStates(value, 'shipping');
+                            });
+                    
+                            // Fetch states for initial values
+                            this.fetchStates(this.billingAddress.country_code, 'billing');
+                            this.fetchStates(this.shippingAddress.country_code, 'shipping');
+                        }
                     }" action="{{ route('profile.update.customer') }}" method="POST">
                         @csrf
                         <h2 class="mb-5 text-xl font-semibold">Your Profile</h2>
@@ -92,14 +118,14 @@
                                     class="w-full border-gray-300 rounded-md focus:border-purple-500 focus:outline-none focus:ring-purple-500">
                                     <option value="">Select Country</option>
                                     <template x-for="country in countries" :key="country.code">
-                                        <option :selected="country.code === billingAddress.country_code"
+                                        <option :selected="country.code === (billingAddress.country_code || 'US')"
                                             x-text="country.name" :value="country.code"></option>
                                     </template>
                                 </select>
                             </div>
                             <div class="flex-1 mb-4">
                                 <template x-if="billingCountryStates">
-                                    <x-input type="select" name="billing[state]" x-model="billingAddress.state"
+                                    <select name="billing[state]" x-model="billingAddress.state"
                                         class="w-full border-gray-300 rounded focus:border-purple-600 focus:ring-purple-600">
                                         <option value="">Select State</option>
                                         <template x-for="[code, state] of Object.entries(billingCountryStates)"
@@ -107,7 +133,7 @@
                                             <option :selected="code === billingAddress.state" :value="code"
                                                 x-text="state"></option>
                                         </template>
-                                    </x-input>
+                                    </select>
                                 </template>
                                 <template x-if="!billingCountryStates">
                                     <x-input type="text" name="billing[state]" x-model="billingAddress.state"
@@ -121,7 +147,15 @@
                             <h2 class="mb-5 text-xl font-semibold">Shipping Address</h2>
                             <label for="sameAsBillingAddress" class="text-gray-700">
                                 <input type="checkbox" id="sameAsBillingAddress" name="same_as_billing"
-                                    @change="$event.target.checked ? shippingAddress = {...billingAddress} : ''" />
+                                    @change="if($event.target.checked) {
+                                        
+                                        shippingAddress = JSON.parse(JSON.stringify(billingAddress));
+                                        
+                                        
+                                        if (billingCountryStates) {
+                                            shippingCountryStates = billingCountryStates;
+                                        }
+                                    }" />
                                 <span class="ml-2">Same as billing address</span>
                             </label>
                         </div>

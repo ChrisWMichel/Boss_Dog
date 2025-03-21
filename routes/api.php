@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\CustomerController;
 use App\Http\Controllers\Api\OrderController as ApiOrderController;
+use App\Http\Controllers\CountryController;
 
 Route::middleware(['auth:sanctum', 'admin'])
     ->group(function () {
@@ -26,3 +27,5 @@ Route::middleware(['auth:sanctum', 'admin'])
     });
 
 Route::post('/login', [AuthController::class, 'login']);
+
+Route::get('/countries/{countryCode}/states', [CountryController::class, 'states']);

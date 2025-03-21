@@ -259,7 +259,7 @@ const users = computed(() => userStore.users);
 const sortField = ref("updated_at");
 const sortDirection = ref("asc");
 
-console.log("users:", users.value.data);
+//console.log("users:", users.value.data);
 
 const showUserModal = ref(false);
 

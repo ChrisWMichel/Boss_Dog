@@ -49,6 +49,19 @@ class LoginRequest extends FormRequest
             ]);
         }
 
+        $user = $this->user();
+        $customer = $user->customer;
+
+        if($customer->status !== 'active'){
+            Auth::guard('web')->logout();
+            $this->session()->invalidate();
+            $this->session()->regenerateToken();
+            throw ValidationException::withMessages([
+                'email' => 'Your account is disabled. Please contact support.',
+            ]);
+           
+        }
+
         RateLimiter::clear($this->throttleKey());
     }
 
