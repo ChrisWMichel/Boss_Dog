@@ -18,7 +18,6 @@
                     >Found {{ customers.data.meta.total }} customers</span
                 >
             </div>
-            <div><h1>Customers Table</h1></div>
             <div>
                 <input
                     v-model="search"

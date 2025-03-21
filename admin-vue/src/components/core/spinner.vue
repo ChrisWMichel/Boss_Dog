@@ -1,8 +1,9 @@
 <template>
-    <div role="status">
+    <div role="status" class="flex flex-col items-center mx-auto">
         <svg
             aria-hidden="true"
-            class="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+            class="text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+            :class="size"
             viewBox="0 0 100 101"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
@@ -16,10 +17,23 @@
                 fill="currentFill"
             />
         </svg>
-        <span class="text-black sr-only">Loading...</span>
+
+            <span v-if="text" class="text-black">{{ text }}</span>
+
     </div>
 </template>
 
-<script setup></script>
+<script setup>
+    defineProps({
+        size: {
+            type: String,
+            default: "w-8 h-8",
+        },
+        text: {
+            type: String,
+            default: "",
+        },
+    });
+</script>
 
 <style lang="scss" scoped></style>

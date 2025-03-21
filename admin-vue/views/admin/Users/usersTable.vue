@@ -18,7 +18,7 @@
                     >Found {{ users.data.meta.total }} users</span
                 >
             </div>
-            <div><h1>Users Table</h1></div>
+            
             <div>
                 <input
                     v-model="search"
