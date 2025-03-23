@@ -12,6 +12,7 @@ import Orders from "../views/admin/Orders/index.vue";
 import OrderView from "../views/admin/Orders/orderView.vue";
 import Users from "../views/admin/Users/index.vue";
 import Customers from "../views/admin/Customers/index.vue";
+import customerView from "../views/admin/Customers/customerView.vue";
 //import NotFound from "../views/NotFound.vue";
 
 const routes = [
@@ -50,6 +51,11 @@ const routes = [
                 path: "customers",
                 name: "app.customers",
                 component: Customers,
+            },
+            {
+                path: "customers/:id",
+                name: "app.customers.view",
+                component: customerView,
             },
         ],
     },
@@ -95,17 +101,41 @@ const routes = [
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes,
+    scrollBehavior(){
+        return { top: 0 };
+    },
 });
 
+// router.beforeEach((to, from, next) => {
+//     const userStore = useUserStore();
+//     if (to.meta.requiresAuth && !userStore.user.token) {
+//         return next({ name: "login" });
+//     } else if (to.meta.requiresGuest && userStore.user.token) {
+//         return next({ name: "app.dashboard" });
+//     } else {
+//         return next();
+//     }
+// });
+
 router.beforeEach((to, from, next) => {
+    if (from.name) {
+      // Small timeout to ensure the previous component is unmounted
+      setTimeout(() => {
+        const elements = document.querySelectorAll('.router-link-active');
+        elements.forEach(el => {
+          el.classList.remove('router-link-active');
+        });
+      }, 100);
+    }
+    
     const userStore = useUserStore();
     if (to.meta.requiresAuth && !userStore.user.token) {
-        return next({ name: "login" });
+      return next({ name: "login" });
     } else if (to.meta.requiresGuest && userStore.user.token) {
-        return next({ name: "app.dashboard" });
+      return next({ name: "app.dashboard" });
     } else {
-        return next();
+      return next();
     }
-});
+  });
 
 export default router;

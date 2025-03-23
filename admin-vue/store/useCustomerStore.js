@@ -197,6 +197,19 @@ export const useCustomerStore = defineStore("customer", () => {
         }
     }
 
+    async function getCustomerData(id) {
+        try {
+            const response = await axiosClient.get(`/customers/${id}`);
+            customer.value.data = response.data;
+            sessionStorage.setItem("customer", JSON.stringify(response.data));
+            return response;
+        } catch (error) {
+            console.error("Get customer error:", error);
+            toast.error("Error getting customer");
+            throw error;
+        }
+    }
+
     const getCustomer = computed(() => customer.value.data);
 
     return {
@@ -204,6 +217,7 @@ export const useCustomerStore = defineStore("customer", () => {
         getCustomer,
         clearForm,
         customers,
+        getCustomerData,
         getCustomers,
         updateCustomer,
         createCustomer,
