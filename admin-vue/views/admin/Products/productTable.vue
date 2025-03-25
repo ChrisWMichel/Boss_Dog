@@ -54,6 +54,15 @@
                     >
                     </tableSorting>
                     <tableSorting
+                        field:published
+                        :sort-field="sortField"
+                        :sort-direction="sortDirection"
+                        @click="sortProducts('published')"
+                        title="Published"
+                        class="pl-10"
+                    >
+                    </tableSorting>
+                    <tableSorting
                         field="price"
                         :sort-field="sortField"
                         :sort-direction="sortDirection"
@@ -106,6 +115,18 @@
                         class="border-b p-2 max-w-[200px] whitespace-nowrap overflow-hidden text-ellipsis"
                     >
                         {{ product.title }}
+                    </td>
+                    <td class="p-2 border-b">
+                        <span v-if="product.published" class="flex items-center justify-center mr-5">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                            </svg>
+                        </span>
+                        <span v-else class="flex items-center justify-center mr-5">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </span>
                     </td>
                     <td class="p-2 border-b">${{ product.price }}</td>
                     <td class="p-2 border-b">
@@ -306,8 +327,8 @@ function deleteProduct(product) {
         });
 }
 
-function editProduct(p) {
-    emit("clickEdit", p);
+function editProduct(product) {
+  emit("clickEdit", product);
 }
 </script>
 

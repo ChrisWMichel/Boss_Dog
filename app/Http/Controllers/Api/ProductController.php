@@ -77,36 +77,45 @@ class ProductController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(ProductRequest $request, Product $product)
-    {
-        // Fetch the product record from the database to get the old image path
-        $OldProduct = Product::findOrFail($product->id);
-        $oldImage = $OldProduct->image;
+{
+    $data = $request->validated();
+    $data['updated_by'] = $request->user()->id;
+    
+    // Check if image is being updated
+    $imageUpdated = $request->input('imageUpdated', false);
+    
+    /** @var \Illuminate\Http\UploadedFile $image */
+    $image = $data['image'] ?? null;
 
-        $data = $request->validated();
-        $data['updated_by'] = $request->user()->id;
+    // Only process image if imageUpdated flag is true
+    if ($imageUpdated && $image) {
+        // Get the old image before updating
+        $oldImage = $product->image;
+        
+        // Save the new image
+        $relativePath = $this->saveImage($image);
+        $data['image'] = $relativePath; 
+        $data['image_size'] = $image->getSize();
 
-        /** @var \Illuminate\Http\UploadedFile $image */
-        $image = $data['image'] ?? null;
-
-        // Check if image was given and save on local file system
-        if ($image) {
-            $relativePath = $this->saveImage($image);
-            $data['image'] = $relativePath; 
-            $data['image_size'] = $image->getSize();
-        }
-
-        $product->update($data);
-
-        if ($oldImage) {      
-            if (file_exists($oldImage)) {
-                unlink($oldImage);
+        // Delete the old image if it exists
+        if ($oldImage) {
+            // Get the full path to the old image
+            $fullPath = public_path($oldImage);
+            
+            if (file_exists($fullPath)) {
+                unlink($fullPath);
             } else {
-                Log::warning('Image not found: ', ['oldImage' => $oldImage]);
+                Log::warning('Image not found: ', ['oldImage' => $oldImage, 'fullPath' => $fullPath]);
             }
         }
-
-        return new ProductResource($product);
+    } else {
+        unset($data['image']);
     }
+
+    $product->update($data);
+
+    return new ProductResource($product);
+}
 
     /**
      * Remove the specified resource from storage.

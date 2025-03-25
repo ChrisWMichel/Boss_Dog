@@ -32,6 +32,7 @@ export const useProductStore = defineStore("products", () => {
             //console.log("Get products response:", response.data);
 
             if (response && response.data) {
+
                 products.value.data = response.data;
                 sessionStorage.setItem(
                     "products",
@@ -62,6 +63,7 @@ export const useProductStore = defineStore("products", () => {
                 form.append("title", data.title);
                 form.append("description", data.description);
                 form.append("price", data.price);
+                form.append("published", data.published ? "1" : "0");
                 data = form;
             }
 
@@ -104,19 +106,34 @@ export const useProductStore = defineStore("products", () => {
     async function updateProduct(data) {
         const id = data.id;
         const url = null;
+        const imageUpdated = data.imageUpdated || false;
 
-        if (data.image instanceof File) {
-            const form = new FormData();
-            form.append("image", data.image);
-            form.append("title", data.title);
-            form.append("description", data.description);
-            form.append("price", data.price);
-            form.append("_method", "PUT");
-            data = form;
-        } else {
-            data._method = "PUT";
-        }
+    const hasValidImage = data.image instanceof File && data.image.size > 0;
+
+    if (hasValidImage && imageUpdated) {
+        const form = new FormData();
+        form.append("image", data.image);
+        form.append("title", data.title);
+        form.append("description", data.description);
+        form.append("price", data.price);
+        form.append("published", data.published ? "1" : "0");
+        form.append("imageUpdated", "1"); 
+        form.append("_method", "PUT");
+        data = form;
+
+    } else {
+        const processedData = {
+            _method: "PUT",
+            title: data.title,
+            description: data.description,
+            price: data.price,
+            published: data.published ? 1 : 0,
+            imageUpdated: imageUpdated ? 1 : 0, // Include the flag even for JSON requests
+        };
+        data = processedData; 
+    }
         try {
+           // console.log('Sending product data:', data);
             const response = await axiosClient.post(`/products/${id}`, data, {
                 headers: {
                     "Content-Type":
@@ -149,7 +166,11 @@ export const useProductStore = defineStore("products", () => {
         } catch (error) {
             console.error("Update product error:", error);
             if (error.response && error.response.data) {
+                console.error("Error status:", error.response.status);
                 console.error("Error details:", error.response.data);
+                if (error.response.data.errors) {
+                    console.error("Validation errors:", error.response.data.errors);
+                }
             }
             toast.error("Error updating product");
             return;

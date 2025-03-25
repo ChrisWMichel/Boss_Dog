@@ -30,7 +30,7 @@
 </template>
 
 <script setup>
-import Sidebar from "./Sidebar_original.vue";
+import Sidebar from "./Sidebar.vue";
 import TopMenu from "./TopMenu.vue";
 import { ref, onMounted, onUnmounted, computed } from "vue";
 import { useUserStore } from "../../../store/useUserStore";

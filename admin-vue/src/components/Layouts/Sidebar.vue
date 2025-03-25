@@ -62,9 +62,9 @@ const menuItems = reactive([
   },
   {
     text: "Reports",
-    to: { name: "app.dashboard" },
+    to: { name: "app.report" },
     icon: ChartBarIcon,
-    name: "app.dashboard",
+    name: "app.report",
   },
 ]);
 

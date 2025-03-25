@@ -27,7 +27,7 @@ class DashboardController extends Controller
 
     public function activeProducts(Request $request)
     {
-        $query = Product::query();
+        $query = Product::query()->where('published', true);
         
         if ($request->has('period') && $request->period !== 'all') {
             $dateRange = $this->getDateRange($request->period);

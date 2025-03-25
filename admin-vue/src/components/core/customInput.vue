@@ -21,7 +21,7 @@
             <template v-else-if="type === 'checkbox'">
                 <input
                     type="checkbox"
-                    :checked="modelValue"
+                    :checked="modelValue === true"
                     :name="name"
                     :required="required"
                     :class="checkboxClasses"
@@ -115,7 +115,10 @@ const checkboxClasses = computed(() => {
 });
 
 const updateCheckbox = (event) => {
+    //console.log("Checkbox change event, checked:", event.target.checked);
+   // console.log("Previous modelValue:", modelValue);
     emit("update:modelValue", event.target.checked);
+    //console.log("Checkbox value updated to:", modelValue.value);
 };
 
 const id = computed(() => {

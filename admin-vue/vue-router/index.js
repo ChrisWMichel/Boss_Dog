@@ -13,6 +13,9 @@ import OrderView from "../views/admin/Orders/orderView.vue";
 import Users from "../views/admin/Users/index.vue";
 import Customers from "../views/admin/Customers/index.vue";
 import customerView from "../views/admin/Customers/customerView.vue";
+import Report from "../views/Reports/Report.vue";
+import ordersReport from "../views/Reports/ordersReport.vue";
+import customersReport from "../views/Reports/customersReport.vue";
 //import NotFound from "../views/NotFound.vue";
 
 const routes = [
@@ -56,6 +59,23 @@ const routes = [
                 path: "customers/:id",
                 name: "app.customers.view",
                 component: customerView,
+            },
+            {
+                path: "/report",
+                name: "app.report",
+                component: Report,
+                children: [
+                    {
+                        path: "orders",
+                        name: "report.orders",
+                        component: ordersReport,
+                    },
+                    {
+                        path: "customers",
+                        name: "report.customers",
+                        component: customersReport,
+                    },
+                ],
             },
         ],
     },
