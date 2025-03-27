@@ -9,6 +9,7 @@
     },
     "dependencies": {
         "@tailwindcss/aspect-ratio": "^0.4.2",
+        "@vuepic/vue-datepicker": "^11.0.2",
         "autoprefixer": "^10.0.0",
         "axios": "^1.7.9",
         "chart.js": "^4.4.8",
