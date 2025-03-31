@@ -3,15 +3,21 @@
         @foreach ($products ?? [] as $product)
             <div x-data="productItem({{ json_encode([
                 'id' => $product->id,
-                'image' => $product->image,
+                'image' => $product->image ?: '/images/No-Image-Placeholder.png',
                 'title' => $product->title,
                 'price' => $product->price,
                 'addToCartUrl' => route('cart.add', $product),
             ]) }})"
                 class="transition-colors bg-white border border-gray-200 rounded-md border-1 hover:border-purple-600">
                 <a href="{{ route('product.view', $product->slug) }}" class="block overflow-hidden aspect-w-3 aspect-h-2">
-                    <img src="{{ $product->image }}" alt=""
-                        class="object-cover transition-transform rounded-lg hover:scale-105 hover:rotate-1" />
+                    @if ($product->image)
+                        <img src="{{ $product->image }}" alt=""
+                            class="object-cover transition-transform rounded-lg hover:scale-105 hover:rotate-1" />
+                    @else
+                        <img src="{{ asset('images/No-Image-Placeholder.png') }}" alt=""
+                            class="object-cover transition-transform rounded-lg hover:scale-105 hover:rotate-1" />
+                    @endif
+
                 </a>
                 <div class="p-4">
                     <h3 class="text-lg">
@@ -25,10 +31,18 @@
                     <h5 class="font-bold">${{ $formattedPrice }}</h5>
                 </div>
                 <div class="flex justify-between px-4 py-3">
+                    @if ($product->quantity != 0 && $product->quantity != null)
+                        <button class="btn-primary" @click="addToCart()">
+                            Add to Cart
+                        </button>
+                    @else
+                        <button
+                            class="font-bold text-black bg-yellow-600 btn-primary hover:bg-yellow-700 hover:cursor-not-allowed"
+                            disabled>
+                            Out of Stock
+                        </button>
+                    @endif
 
-                    <button class="btn-primary" @click="addToCart()">
-                        Add to Cart
-                    </button>
                 </div>
             </div>
         @endforeach

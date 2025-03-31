@@ -123,18 +123,18 @@ const props = defineProps({
 });
 
 const handleImageChange = (event) => {
-  console.log('Image change event triggered');
+  console.log("Image change event triggered");
   if (event.target.files.length > 0) {
     const file = event.target.files[0];
-    console.log('New file selected:', file.name, 'size:', file.size);
+    console.log("New file selected:", file.name, "size:", file.size);
     product.value.image = file;
     imageUpdated.value = true;
-    console.log('imageUpdated flag set to:', imageUpdated.value);
-  }  else {
+    console.log("imageUpdated flag set to:", imageUpdated.value);
+  } else {
     // If no file is selected, reset the image and flag
     product.value.image = null;
     imageUpdated.value = false;
-    console.log('No file selected, imageUpdated flag reset to:', imageUpdated.value);
+    console.log("No file selected, imageUpdated flag reset to:", imageUpdated.value);
   }
 };
 
@@ -162,8 +162,12 @@ function closeModal() {
 const onSubmit = async () => {
   product.value.loading = true;
   if (product.value.id) {
-    const hasValidImage = product.value.image instanceof File && product.value.image.size > 0;
-    const productData = { ...product.value, imageUpdated: hasValidImage || imageUpdated.value };
+    const hasValidImage =
+      product.value.image instanceof File && product.value.image.size > 0;
+    const productData = {
+      ...product.value,
+      imageUpdated: hasValidImage || imageUpdated.value,
+    };
     await productStore
       .updateProduct(productData)
       .then(() => {
@@ -192,7 +196,7 @@ const onSubmit = async () => {
           id: "",
           title: "",
           price: "",
-          published: '',
+          published: "",
           description: "",
           image: null,
         };

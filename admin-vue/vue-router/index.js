@@ -16,6 +16,7 @@ import customerView from "../views/admin/Customers/customerView.vue";
 import Report from "../views/Reports/Report.vue";
 import ordersReport from "../views/Reports/ordersReport.vue";
 import customersReport from "../views/Reports/customersReport.vue";
+import ProductForm from "../views/admin/Products/productForm.vue";
 //import NotFound from "../views/NotFound.vue";
 
 const routes = [
@@ -34,6 +35,19 @@ const routes = [
                 path: "products",
                 name: "app.products",
                 component: Products,
+            },
+            {
+                path: "products/create",
+                name: "app.products.create",
+                component: ProductForm,
+            },
+            {
+                path: "products/:id",
+                name: "app.products.edit",
+                component: ProductForm,
+                props: {
+                    id: (value) => /^\d+$/.test(value)
+                }
             },
             {
                 path: "orders",

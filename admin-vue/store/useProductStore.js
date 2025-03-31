@@ -8,7 +8,21 @@ export const useProductStore = defineStore("products", () => {
         loading: false,
         data: JSON.parse(sessionStorage.getItem("products")) || [],
     });
+    const product = ref({});
     const toast = useToast();
+
+    async function getProductData(id) {
+        try {
+            const response = await axiosClient.get(`/products/${id}`);
+            product.value.data = response.data;
+            sessionStorage.setItem("product", JSON.stringify(response.data));
+            return response.data.data;
+        } catch (error) {
+            console.error("Get product error:", error);
+            toast.error("Error getting product");
+            throw error;
+        }
+    }
 
     async function getProducts({
         url = null,
@@ -203,5 +217,6 @@ export const useProductStore = defineStore("products", () => {
         createProduct,
         updateProduct,
         deleteProduct,
+        getProductData,
     };
 });

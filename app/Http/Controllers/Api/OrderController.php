@@ -61,6 +61,13 @@ class OrderController extends Controller
         $order->status = $status;
         $order->save();
 
+        if($status === 'cancelled'){
+            $order->items->each(function($item){
+                $item->product->quantity += $item->quantity;
+                $item->product->save();
+            });
+        }
+
         Mail::to($order->user->email)->send(new \App\Mail\OrderUpdateEmail($order));
 
         return response()->json(['message' => 'Order status updated successfully']);

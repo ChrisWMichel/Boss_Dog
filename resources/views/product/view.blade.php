@@ -12,7 +12,7 @@
             <div class="lg:col-span-3">
 
                 <div x-data="{
-                    images: ['{{ asset($product->image) }}'],
+                    images: ['{{ asset($product->image ?: '/images/No-Image-Placeholder.png') }}'],
                     activeImage: null,
                     prev() {
                         let index = this.images.indexOf(this.activeImage);
@@ -85,9 +85,16 @@
                     <input type="number" name="quantity" x-ref="quantityEl" value="1" min="1"
                         class="w-32 rounded focus:border-purple-500 focus:outline-none" />
                 </div>
-                <button :disabled="product.quantity === 0" @click="addToCart($refs.quantityEl.value)"
+                @if ($product->quantity === 0 || $product->quantity === null)
+                    <div class="text-lg font-bold text-center text-red-700">
+                        Out of Stock
+                    </div>
+                @endif
+                <div></div>
+                <button :disabled="product.quantity === 0 || product.quantity === null"
+                    @click="addToCart($refs.quantityEl.value)"
                     class="flex justify-center w-full min-w-0 py-4 mb-6 text-lg btn-primary"
-                    :class="product.quantity === 0 ? 'cursor-not-allowed' : 'cursor-pointer'">
+                    :class="product.quantity === 0 || product.quantity === null ? 'cursor-not-allowed' : 'cursor-pointer'">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mr-2" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round"

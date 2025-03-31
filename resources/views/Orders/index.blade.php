@@ -36,8 +36,8 @@
                             @endphp
                             <td>${{ $formattedPrice }}</td>
                             <td class="whitespace-nowrap">
-                                {{ $order->items->count() }}
-                                {{ $order->items->count() === 1 ? 'item' : 'items' }}
+                                {{ $order->items_count }}
+                                {{ $order->items_count === 1 ? 'item' : 'items' }}
                             </td>
                             <td class="flex gap-3">
                                 {{-- @if ($order->status === 'paid')
@@ -90,7 +90,11 @@
                                         </template>
                                 @endif --}}
         </div>
-        @if ($order->status != 'paid')
+        @if (
+            $order->status != 'paid' &&
+                $order->status != 'cancelled' &&
+                $order->status != 'shipped' &&
+                $order->status != 'completed')
             <form action="{{ route('cart.checkout-order', $order) }}" method="post">
                 @csrf
                 <button class="flex items-center px-2 py-1 btn-primary">

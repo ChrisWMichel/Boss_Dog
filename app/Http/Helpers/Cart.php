@@ -27,13 +27,14 @@ class Cart
         $request = \request();
         $user = $request->user();
         if($user){
-            return CartItem::where('user_id', $user->id)->get()->map(
-                fn($item) => [
-                    'product_id' => $item->product_id,
-                    'quantity' => $item->quantity,
-                    'price' => $item->product->price,
-                ]
-            );
+            return CartItem::where('user_id', $user->id)
+            ->with('product')  
+            ->get()
+            ->map(fn($item) => [
+                'product_id' => $item->product_id,
+                'quantity' => $item->quantity,
+                'price' => $item->product->price,
+            ]);
         } else {
             return self::getCookieCartItems();
             
@@ -87,8 +88,10 @@ class Cart
     public static function getProductsAndCartItems(){
         $cartItems = Cart::getCartItems() ?? [];
         $ids = Arr::pluck($cartItems, 'product_id');
-        $products = Product::query()->whereIn('id', $ids)->get();
-        $cartItems = Arr::keyBy($cartItems, 'product_id');
-        return [$products, $cartItems];
+        $products = Product::whereIn('id', $ids)
+                      ->get();
+                      
+    $cartItems = Arr::keyBy($cartItems, 'product_id');
+    return [$products, $cartItems];
     }
 }

@@ -28,6 +28,7 @@ class ProductRequest extends FormRequest
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
             'published' => 'required|boolean',
             'imageUpdated' => 'nullable|boolean',
+            'quantity' => 'nullable|integer',
         ];
     }
 }

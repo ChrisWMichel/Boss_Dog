@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
+use App\Models\Category;
 
 class Product extends Model
 {
@@ -18,11 +19,11 @@ class Product extends Model
         'title',
         'description',
         'price',
-        'image',
         'published',
-        'image_size',
+        'quantity',
         'created_by',
         'updated_by',
+        'category_id',
     ];
 
     public function getSlugOptions() : SlugOptions
@@ -37,4 +38,18 @@ class Product extends Model
         return 'slug';
     }
 
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    public function images()
+    {
+        return $this->hasMany(ProductImage::class)->orderBy('position');
+    }
+
+    public function getImageAttribute()
+    {
+        return $this->images->count() > 0 ? $this->images->get(0)->url : null;
+    }
 }
