@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\ProductRequest;
 use App\Http\Resources\ProductResource;
 use App\Http\Resources\ProductListResource;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -41,21 +42,23 @@ class ProductController extends Controller
     public function store(ProductRequest $request)
     {
         $data = $request->validated();
-        $data['created_by'] = $request->user()->id;
-        $data['updated_by'] = $request->user()->id;
+    $data['created_by'] = $request->user()->id;
+    $data['updated_by'] = $request->user()->id;
 
-        /** @var \Illuminate\Http\UploadedFile $image */
-        $image = $data['image'] ?? null;
-        // Check if image was given and save on local file system
-        if ($image) {
-            $relativePath = $this->saveImage($image);
-            $data['image'] = $relativePath;
-            $data['image_size'] = $image->getSize();
-        }
+    // Remove image data from product creation
+    $images = $data['images'] ?? [];
+    unset($data['images']);
+    unset($data['image']); // Remove old single image field if present
 
-        $product = Product::create($data);
+    // Create the product without images
+    $product = Product::create($data);
 
-        return new ProductResource($product);
+    // Process and save multiple images
+    if (!empty($images)) {
+        $this->saveProductImages($product, $images);
+    }
+
+    return new ProductResource($product);
     }
 
     /**
@@ -80,39 +83,47 @@ class ProductController extends Controller
 {
     $data = $request->validated();
     $data['updated_by'] = $request->user()->id;
-    
-    // Check if image is being updated
-    $imageUpdated = $request->input('imageUpdated', false);
-    
-    /** @var \Illuminate\Http\UploadedFile $image */
-    $image = $data['image'] ?? null;
 
-    // Only process image if imageUpdated flag is true
-    if ($imageUpdated && $image) {
-        // Get the old image before updating
-        $oldImage = $product->image;
-        
-        // Save the new image
-        $relativePath = $this->saveImage($image);
-        $data['image'] = $relativePath; 
-        $data['image_size'] = $image->getSize();
+    // Handle images separately
+    $images = $data['images'] ?? [];
+    $deletedImages = $data['deleted_images'] ?? [];
+    $imagePositions = $data['image_positions'] ?? [];
 
-        // Delete the old image if it exists
-        if ($oldImage) {
-            // Get the full path to the old image
-            $fullPath = public_path($oldImage);
-            
-            if (file_exists($fullPath)) {
-                unlink($fullPath);
-            } else {
-                Log::warning('Image not found: ', ['oldImage' => $oldImage, 'fullPath' => $fullPath]);
+    unset($data['images']);
+    unset($data['deleted_images']);
+    unset($data['image_positions']);
+    unset($data['image']); // Remove old single image field if present
+
+    // Update product data
+    $product->update($data);
+
+    // Process deleted images
+    if (!empty($deletedImages)) {
+        foreach ($deletedImages as $imageId) {
+            $image = $product->images()->find($imageId);
+            if ($image) {
+                // Delete the physical file
+                $fullPath = public_path($image->path);
+                if (file_exists($fullPath)) {
+                    unlink($fullPath);
+                }
+                // Delete the database record
+                $image->delete();
             }
         }
-    } else {
-        unset($data['image']);
     }
 
-    $product->update($data);
+    // Update image positions
+    if (!empty($imagePositions)) {
+        foreach ($imagePositions as $id => $position) {
+            $product->images()->where('id', $id)->update(['position' => $position]);
+        }
+    }
+
+    // Add new images
+    if (!empty($images)) {
+        $this->saveProductImages($product, $images);
+    }
 
     return new ProductResource($product);
 }
@@ -132,8 +143,64 @@ class ProductController extends Controller
 
     private function saveImage(UploadedFile $image)
     {
+        // $image_name = time().'_'.$image->getClientOriginalName();
+        // $image->storeAs('images/products', $image_name, 'public');
+        // return 'storage/images/products/'.$image_name;
+
+        $path = 'images/boss_dog';
         $image_name = time().'_'.$image->getClientOriginalName();
-        $image->storeAs('images/products', $image_name, 'public');
-        return 'storage/images/products/'.$image_name;
+        $fullPath = $path.'/'.$image_name;
+
+        $bucket = env('AWS_BUCKET');
+
+        try {
+            $fileContents = file_get_contents($image->getRealPath());
+
+            // Get the S3 client directly to access more detailed error information
+            $s3Client = Storage::disk('s3')->getClient();
+
+            try {
+                // Use the S3 client directly with explicit bucket name
+                $result = $s3Client->putObject([
+                    'Bucket' => $bucket,
+                    'Key'    => $fullPath,
+                    'Body'   => $fileContents,
+                    'ContentType' => $image->getMimeType()
+                ]);
+
+                //Log::info("S3 put successful. RequestId: " . ($result['RequestId'] ?? 'N/A'));
+
+                // Construct the URL manually
+                $url = "https://{$bucket}.s3." . env('AWS_DEFAULT_REGION') . ".amazonaws.com/{$fullPath}";
+
+                return $url;
+            } catch (\Aws\S3\Exception\S3Exception $e) {
+                // This will catch specific AWS S3 exceptions
+                Log::error("AWS S3 Exception: " . $e->getMessage());
+                throw $e;
+            }
+        } catch (\Exception $e) {
+            Log::error("General exception: " . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    private function saveProductImages($product, $images)
+    {
+        $position = $product->images()->max('position') + 1 ?? 1;
+        
+        foreach ($images as $image) {
+            if ($image instanceof UploadedFile) {
+                $relativePath = $this->saveImage($image);
+                
+                $product->images()->create([
+                    'path' => $relativePath,
+                    'url' => $relativePath,
+                    'mime' => $image->getMimeType(),
+                    'size' => $image->getSize(),
+                    'position' => $position++,
+                ]);
+            }
+        }
     }
 }
