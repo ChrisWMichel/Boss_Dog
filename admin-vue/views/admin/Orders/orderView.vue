@@ -88,7 +88,7 @@
                                 class="object-cover w-16 h-16"
                                 :src="
                                     item.product?.image
-                                        ? `/${item.product.image}`
+                                        ? (isFullUrl(item.product.image) ? item.product.image : `/${item.product.image}`)
                                         : '/img/noimage.png'
                                 "
                                 :alt="item.product?.title"
@@ -135,6 +135,12 @@ const orderStore = useOrderStore();
 const order = ref(null);
 const orderStatus = ref([]);
 const loading = ref(true);
+
+// Function to check if a URL is a full URL (starts with http:// or https://)
+function isFullUrl(url) {
+  if (!url) return false;
+  return url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:');
+}
 
 const getStatusClass = () => {
     if (!order.value.data) return "";

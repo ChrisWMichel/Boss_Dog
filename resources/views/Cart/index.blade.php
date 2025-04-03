@@ -1,3 +1,7 @@
+@php
+    use Illuminate\Support\Str;
+@endphp
+
 <x-app-layout>
     <div class="container mx-auto mt-20 lg:w-2/3 xl:w-2/3">
         <h1 class="mb-6 text-3xl font-bold">Your Cart Items</h1>
@@ -8,7 +12,11 @@
                     fn($product) => [
                         'id' => $product->id,
                         'slug' => $product->slug,
-                        'image' => $product->image ?: '/img/noimage.png',
+                        'image' => $product->image
+                            ? (Str::startsWith($product->image, ['http://', 'https://', 'data:'])
+                                ? $product->image
+                                : asset($product->image))
+                            : asset('/img/noimage.png'),
                         'title' => $product->title,
                         'price' => $product->price,
                         'quantity' => $cartItems[$product->id]['quantity'],

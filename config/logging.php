@@ -127,6 +127,12 @@ return [
             'path' => storage_path('logs/laravel.log'),
         ],
 
+        'aws' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/aws.log'),
+            'level' => 'warning', // Only log warnings and above
+        ],
+
     ],
 
 ];

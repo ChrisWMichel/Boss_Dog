@@ -8,11 +8,11 @@
                     <span class="mt-3 mr-2"
                         >{{ user.firstname }} {{ user.lastname }}</span
                     >
-                    <img
-                        src="https://randomuser.me/api/portraits/men/32.jpg"
-                        alt="profile"
-                        class="w-10 h-10 rounded-full"
-                    />
+                    <UserIcon                                    
+                                    
+                                    class="w-5 h-5 mt-3 text-slate-350"
+                                    aria-hidden="true"
+                                />
                 </MenuButton>
             </div>
 
@@ -75,7 +75,7 @@ import { Menu, MenuButton, MenuItems, MenuItem } from "@headlessui/vue";
 import {
     ArrowLeftStartOnRectangleIcon,
     UserIcon,
-} from "@heroicons/vue/24/outline";
+} from "@heroicons/vue/24/solid";
 import { useUserStore } from "../../../store/useUserStore";
 import { useRouter } from "vue-router";
 
@@ -89,26 +89,5 @@ const logout = () => {
     });
 };
 
-// const logout = () => {
-//     axios
-//         .post(
-//             LOGOUT_URL,
-//             {},
-//             {
-//                 headers: {
-//                     Authorization: `Bearer ${userStore.user.token}`,
-//                 },
-//             }
-//         )
-//         .then(() => {
-//             userStore.user.token = "";
-//             userStore.user.data = {};
-//             sessionStorage.removeItem("TOKEN");
-//             console.log("Logged out");
-//             router.push({ name: "login" });
-//         })
-//         .catch((error) => {
-//             console.error(error);
-//         });
-// };
+
 </script>

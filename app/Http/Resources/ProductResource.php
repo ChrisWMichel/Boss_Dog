@@ -20,11 +20,21 @@ class ProductResource extends JsonResource
             'slug' => $this->slug,
             'description' => $this->description,
             'price' => $this->price,
-            'image' => $this->image,
+            'image' => $this->image, // Keep this for backward compatibility
+            'images' => $this->images->map(function($image) {
+                return [
+                    'id' => $image->id,
+                    'url' => $image->url,
+                    'path' => $image->path,
+                    'mime' => $image->mime,
+                    'size' => $image->size,
+                    'position' => $image->position,
+                ];
+            }),
             'quantity' => $this->quantity,
             'published' => (bool)$this->published,
             'created_at' => (new \DateTime($this->created_at))->format('m-d-Y'),
-            'updated_at' => (new \DateTime($this->updated_at))->format('m-d-Y'), 
+            'updated_at' => (new \DateTime($this->updated_at))->format('m-d-Y'),
         ];
     }
 }

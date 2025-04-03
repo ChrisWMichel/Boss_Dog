@@ -26,9 +26,37 @@ class ProductRequest extends FormRequest
             'description' => 'nullable|string',
             'price' => 'required|numeric',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg,webp|max:2048',
+            'images' => 'nullable|array',
+            'images.*' => 'nullable',
+            'deleted_images' => 'nullable|array',
+            'deleted_images.*.id' => 'nullable|integer',
+            'deleted_images.*.filename' => 'required|string',
+            'image_positions' => 'nullable|array',
+            'image_positions.*' => 'nullable|integer',
             'published' => 'required|boolean',
             'imageUpdated' => 'nullable|boolean',
             'quantity' => 'nullable|integer',
+            'no_new_images' => 'nullable|boolean',
         ];
+    }
+
+    /**
+     * Get all of the input and files for the request.
+     *
+     * @return array
+     */
+    public function all($keys = null)
+    {
+        $data = parent::all($keys);
+
+        // Log the raw request data for debugging
+        // \Illuminate\Support\Facades\Log::info('Raw request data in ProductRequest:', [
+        //     'files' => $this->allFiles(),
+        //     'data' => $data,
+        //     'has_images' => $this->hasFile('images'),
+        //     'has_images_array' => $this->hasFile('images.0')
+        // ]);
+
+        return $data;
     }
 }

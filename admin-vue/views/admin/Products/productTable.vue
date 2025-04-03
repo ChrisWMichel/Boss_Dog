@@ -110,7 +110,7 @@
             <img
               v-if="product.image"
               class="object-cover w-16 h-16"
-              :src="`/${product.image}`"
+              :src="isFullUrl(product.image) ? product.image : `/${product.image}`"
               :alt="product.title"
             />
             <img
@@ -281,6 +281,7 @@ const sortField = ref("updated_at");
 const sortDirection = ref("asc");
 
 const showProductModal = ref(false);
+//console.log("products Table:", products.value.data);
 
 const emit = defineEmits(["clickEdit"]);
 
@@ -348,6 +349,14 @@ function deleteProduct(product) {
 
 function editProduct(product) {
   emit("clickEdit", product);
+}
+
+// Function to check if a URL is a full URL (starts with http:// or https://)
+function isFullUrl(url) {
+  if (!url) return false;
+  return (
+    url.startsWith("http://") || url.startsWith("https://") || url.startsWith("data:")
+  );
 }
 </script>
 

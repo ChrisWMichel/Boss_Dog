@@ -19,10 +19,16 @@ class ProductListResource extends JsonResource
             'title' => $this->title,
             'price' => $this->price,
             'description' => $this->description,
-            'image' => $this->image,
+            'image' => $this->image, // Keep this for backward compatibility
+            'images' => $this->images->map(function($image) {
+                return [
+                    'id' => $image->id,
+                    'url' => $image->url,
+                ];
+            }),
             'quantity' => $this->quantity,
             'published' => (bool)$this->published,
-            'updated_at' => (new \DateTime($this->updated_at))->format('m-d-Y'), 
+            'updated_at' => (new \DateTime($this->updated_at))->format('m-d-Y'),
         ];
     }
 }

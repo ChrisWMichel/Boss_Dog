@@ -1,3 +1,7 @@
+@php
+    use Illuminate\Support\Str;
+@endphp
+
 <x-app-layout>
     <div class="grid gap-8 p-5 mt-20 grig-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         @foreach ($products ?? [] as $product)
@@ -11,7 +15,8 @@
                 class="transition-colors bg-white border border-gray-200 rounded-md border-1 hover:border-purple-600">
                 <a href="{{ route('product.view', $product->slug) }}" class="block overflow-hidden aspect-w-3 aspect-h-2">
                     @if ($product->image)
-                        <img src="{{ $product->image }}" alt=""
+                        <img src="{{ Str::startsWith($product->image, ['http://', 'https://', 'data:']) ? $product->image : asset($product->image) }}"
+                            alt=""
                             class="object-cover transition-transform rounded-lg hover:scale-105 hover:rotate-1" />
                     @else
                         <img src="{{ asset('images/No-Image-Placeholder.png') }}" alt=""

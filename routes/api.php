@@ -37,6 +37,8 @@ Route::middleware(['auth:sanctum', 'admin'])
         Route::get('/report/orders', [ReportController::class, 'orders']);
         Route::get('/report/customers', [ReportController::class, 'customers']);
         
+        Route::post('/get-image-id', [App\Http\Controllers\Api\ProductController::class, 'getImageIdByFilename']);
+        
     });
 
 Route::post('/login', [AuthController::class, 'login']);

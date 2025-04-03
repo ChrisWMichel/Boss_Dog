@@ -1,8 +1,16 @@
+@php
+    use Illuminate\Support\Str;
+@endphp
+
 <x-app-layout>
     <div x-data="productItem({{ json_encode([
         'id' => $product->id,
         'slug' => $product->slug,
-        'image' => $product->image ?: '/img/noimage.png',
+        'image' => $product->image
+            ? (Str::startsWith($product->image, ['http://', 'https://', 'data:'])
+                ? $product->image
+                : asset($product->image))
+            : asset('/img/noimage.png'),
         'title' => $product->title,
         'price' => $product->price,
         'quantity' => $product->quantity,
@@ -12,7 +20,7 @@
             <div class="lg:col-span-3">
 
                 <div x-data="{
-                    images: ['{{ asset($product->image ?: '/images/No-Image-Placeholder.png') }}'],
+                    images: {{ json_encode(count($imageUrls) > 0 ? $imageUrls : [asset('/images/No-Image-Placeholder.png')]) }},
                     activeImage: null,
                     prev() {
                         let index = this.images.indexOf(this.activeImage);
@@ -57,7 +65,7 @@
                             </svg>
                         </a>
                     </div>
-                    <div class="flex">
+                    <div class="flex items-center justify-center gap-2">
                         <template x-for="image in images">
                             <a @click.prevent="activeImage = image"
                                 class="cursor-pointer w-[80px] h-[80px] border border-gray-300 hover:border-purple-500 flex items-center justify-center"

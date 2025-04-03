@@ -1,3 +1,7 @@
+@php
+    use Illuminate\Support\Str;
+@endphp
+
 <x-app-layout>
     <div class="container mx-auto mt-20 lg:w-2/3 xl:w-2/3">
         <h1 class="mb-6 text-3xl font-bold">Order #{{ $order->id }} Details</h1>
@@ -43,7 +47,8 @@
                     <div class="flex flex-col items-center w-full gap-4 sm:flex-row">
                         <a href="{{ route('product.view', $item->product) }}"
                             class="flex items-center justify-center h-32 overflow-hidden w-36">
-                            <img src="{{ asset($item->product->image) }}" class="object-cover" alt="" />
+                            <img src="{{ Str::startsWith($item->product->image, ['http://', 'https://', 'data:']) ? $item->product->image : asset($item->product->image) }}"
+                                class="object-cover" alt="" />
                         </a>
                         <div class="flex flex-col justify-between w-full">
                             <div class="mb-3 ">

@@ -22,7 +22,7 @@
             :errors="errors['title']"
           />
           <customInput
-            type="richtext"
+            type="textarea"
             class="mb-2"
             v-model="product.description"
             label="Description"
@@ -54,20 +54,21 @@
             />
             <span>Published</span>
           </div>
-          <treeselect
+          <!-- <treeselect
             v-model="product.categories"
             :multiple="true"
             :options="options"
             :errors="errors['categories']"
-          />
+          /> -->
         </div>
-        
+
         <div class="col-span-1 px-4 pt-5 pb-4">
           <ImagePreview
             v-model="product.images"
             :images="product.images"
             v-model:deleted-images="product.deleted_images"
             v-model:images-positions="product.image_positions"
+            @image-deleted="handleImageDeleted"
           />
         </div>
       </div>
@@ -126,7 +127,7 @@ const product = ref({
   description: "",
   price: null,
   quantity: null,
-  published: false,
+  published: true,
   categories: [],
 });
 
@@ -137,52 +138,95 @@ const options = ref([]);
 
 const emit = defineEmits(["update:modelValue", "close"]);
 
-// const props = defineProps({
-//   id: {
-//     type: [Number, String],
-//     default: null,
-//   },
-// });
+const props = defineProps({
+  id: {
+    type: [Number, String],
+    default: null,
+  },
+});
 
 onMounted(async () => {
   if (route.params.id) {
     loading.value = true;
-    product.value = await productStore.getProductData(route.params.id);
-    //console.log("Product loaded:", product.value);
+    const productData = await productStore.getProductData(route.params.id);
+
+    // Ensure images is an array of objects with id and url properties
+    if (productData.images) {
+
+      // Format images if needed
+      const formattedImages = productData.images
+        .map((img) => {
+          if (typeof img === "string") {
+            return { url: img };
+          } else if (typeof img === "object") {
+            return img;
+          }
+          return null;
+        })
+        .filter((img) => img !== null);
+
+      productData.images = formattedImages;
+    }
+
+    product.value = productData;
+
+    // Ensure properties exist after loading
+    ensureProductProperties();
+
     loading.value = false;
   }
-
-  // axiosClient.get("/categories/tree").then((result) => {
-  //   options.value = result.data;
-  // });
 });
 
-const onSubmit = async () => {
+const ensureProductProperties = () => {
+  // Ensure deleted_images exists and is an array
+  if (!product.value.deleted_images) {
+    product.value.deleted_images = [];
+  }
+
+  // Ensure image_positions exists and is an object
+  if (!product.value.image_positions) {
+    product.value.image_positions = {};
+  }
+};
+
+const onSubmit = async (event, close = false) => {
+  ensureProductProperties();
   loading.value = true;
   product.value.quantity = product.value.quantity || null;
+
   if (product.value.id) {
-    const hasValidImage =
-      product.value.images instanceof File && product.value.images.size > 0;
     const productData = {
       ...product.value,
-      imageUpdated: hasValidImage || imageUpdated.value,
     };
+    console.log("Submitting product data:", productData);
     await productStore
       .updateProduct(productData)
       .then(() => {
-        imageUpdated.value = false;
         loading.value = false;
-        product.value = {
-          id: "",
-          title: "",
-          price: "",
-          published: true,
-          description: "",
-          images: null,
-        };
         toast.success("Product has been successfully updated");
+
         if (close) {
+          // Reset the form and redirect
+          product.value = {
+            id: "",
+            title: "",
+            price: "",
+            published: true,
+            description: "",
+            images: [],
+            deleted_images: [],
+            image_positions: {}
+          };
           router.push({ name: "app.products" });
+        } else {
+          // Reload the product data to refresh the form
+          productStore.getProductData(product.value.id).then(productData => {
+            product.value = productData;
+            // Reset deleted_images after successful update
+            product.value.deleted_images = [];
+            // Ensure properties exist
+            ensureProductProperties();
+          });
         }
       })
       .catch((error) => {
@@ -197,11 +241,11 @@ const onSubmit = async () => {
           id: "",
           title: "",
           price: "",
-          published: "",
+          published: true,
           description: "",
           images: null,
         };
-        toast.success("Product has been successfully created");
+        toast.success("Product has been successfully created.");
         if (close) {
           router.push({ name: "app.products" });
         }
@@ -213,19 +257,41 @@ const onSubmit = async () => {
   }
 };
 
-// watch(
-//   () => props.product,
-//   (newProduct) => {
-//     const publishedValue = newProduct.published === true;
-//     product.value = {
-//       id: newProduct.id || "",
-//       title: newProduct.title || "",
-//       price: newProduct.price || "",
-//       published: publishedValue, // Explicitly convert to boolean
-//       description: newProduct.description || "",
-//       images: newProduct.images || null,
-//     };
-//   },
-//   { immediate: true }
-// );
+const handleImageDeleted = async ({ url, filename }) => {
+  try {
+    // Get the image ID from the server
+    const response = await axiosClient.post('/get-image-id', {
+      filename: filename,
+      product_id: product.value.id
+    });
+
+    if (response.data && response.data.id) {
+      const imageId = response.data.id;
+
+      // Create an object with the filename and the actual ID
+      const imageInfo = {
+        id: imageId,
+        filename: filename
+      };
+
+      // Add the image info to deleted_images
+      if (!product.value.deleted_images) {
+        product.value.deleted_images = [];
+      }
+
+      // Check if this image is already in the array
+      const exists = product.value.deleted_images.some(item =>
+        (typeof item === 'object' && item.id === imageInfo.id)
+      );
+
+      if (!exists) {
+        product.value.deleted_images.push(imageInfo);
+      }
+    } else {
+      console.log("Could not get image ID from server");
+    }
+  } catch (error) {
+    console.error("Error getting image ID:", error);
+  }
+};
 </script>

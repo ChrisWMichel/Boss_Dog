@@ -45,9 +45,7 @@ const routes = [
                 path: "products/:id",
                 name: "app.products.edit",
                 component: ProductForm,
-                props: {
-                    id: (value) => /^\d+$/.test(value)
-                }
+                props: true,
             },
             {
                 path: "orders",
@@ -140,17 +138,6 @@ const router = createRouter({
     },
 });
 
-// router.beforeEach((to, from, next) => {
-//     const userStore = useUserStore();
-//     if (to.meta.requiresAuth && !userStore.user.token) {
-//         return next({ name: "login" });
-//     } else if (to.meta.requiresGuest && userStore.user.token) {
-//         return next({ name: "app.dashboard" });
-//     } else {
-//         return next();
-//     }
-// });
-
 router.beforeEach((to, from, next) => {
     if (from.name) {
       // Small timeout to ensure the previous component is unmounted
@@ -161,7 +148,7 @@ router.beforeEach((to, from, next) => {
         });
       }, 100);
     }
-    
+
     const userStore = useUserStore();
     if (to.meta.requiresAuth && !userStore.user.token) {
       return next({ name: "login" });

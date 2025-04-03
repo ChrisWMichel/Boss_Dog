@@ -33,7 +33,6 @@ export const useProductStore = defineStore("products", () => {
     }) {
         products.value.loading = true;
         url = url || "/products";
-        //console.log("Get products");
         try {
             const response = await axiosClient.get(url, {
                 params: {
@@ -43,7 +42,6 @@ export const useProductStore = defineStore("products", () => {
                     sortDirection,
                 },
             });
-            //console.log("Get products response:", response.data);
 
             if (response && response.data) {
 
@@ -68,22 +66,51 @@ export const useProductStore = defineStore("products", () => {
         }
     }
 
-    async function createProduct(data) {
+    async function createProduct(originalData) {
         const url = null;
+        let processedData;
+
         try {
-            if (data.image instanceof File) {
-                const form = new FormData();
-                form.append("image", data.image);
-                form.append("title", data.title);
-                form.append("description", data.description);
-                form.append("price", data.price);
-                form.append("published", data.published ? "1" : "0");
-                data = form;
+            // Check if we have images to upload
+            if (originalData.images && originalData.images.length > 0) {
+                processedData = new FormData();
+
+                // Append each image individually
+                for (let i = 0; i < originalData.images.length; i++) {
+                    processedData.append("images[]", originalData.images[i]);
+                }
+
+                // Append other product data
+                processedData.append("title", originalData.title);
+                processedData.append("description", originalData.description || '');
+                processedData.append("price", originalData.price);
+                processedData.append("published", originalData.published ? "1" : "0");
+                processedData.append("quantity", originalData.quantity || "");
+            } else if (originalData.image instanceof File) {
+                // Legacy support for single image upload
+                processedData = new FormData();
+                processedData.append("image", originalData.image);
+                processedData.append("title", originalData.title);
+                processedData.append("description", originalData.description || '');
+                processedData.append("price", originalData.price);
+                processedData.append("published", originalData.published ? "1" : "0");
+                processedData.append("quantity", originalData.quantity || "");
+            } else {
+                // No images, just send JSON data
+                processedData = {
+                    title: originalData.title,
+                    description: originalData.description || '',
+                    price: originalData.price,
+                    published: originalData.published ? true : false,
+                    quantity: originalData.quantity || null
+                };
             }
 
-            const response = await axiosClient.post("/products", data, {
+            const response = await axiosClient.post("/products", processedData, {
                 headers: {
-                    "Content-Type": "multipart/form-data",
+                    "Content-Type": processedData instanceof FormData
+                        ? "multipart/form-data"
+                        : "application/json",
                 },
             });
 
@@ -94,7 +121,7 @@ export const useProductStore = defineStore("products", () => {
                     JSON.stringify(products.value.data)
                 );
 
-                toast.success("Product created successfully");
+                //toast.success("Product created successfully");
                 this.getProducts({
                     url,
                     search: "",
@@ -117,41 +144,68 @@ export const useProductStore = defineStore("products", () => {
         }
     }
 
-    async function updateProduct(data) {
-        const id = data.id;
+    async function updateProduct(originalData) {
+        const id = originalData.id;
         const url = null;
-        const imageUpdated = data.imageUpdated || false;
+        let processedData;
 
-    const hasValidImage = data.image instanceof File && data.image.size > 0;
+        // Always use FormData for updates to handle image positions and deletions
+        processedData = new FormData();
 
-    if (hasValidImage && imageUpdated) {
-        const form = new FormData();
-        form.append("image", data.image);
-        form.append("title", data.title);
-        form.append("description", data.description);
-        form.append("price", data.price);
-        form.append("published", data.published ? "1" : "0");
-        form.append("imageUpdated", "1"); 
-        form.append("_method", "PUT");
-        data = form;
+        // Check if we have any new images to upload
+        let hasNewImages = false;
+        if (originalData.images && originalData.images.length > 0) {
+            // Append each image individually
+            for (let i = 0; i < originalData.images.length; i++) {
+                const image = originalData.images[i];
+                // Only append if it's a File object
+                if (image instanceof File) {
+                    processedData.append("images[]", image);
+                    hasNewImages = true;
+                }
+            }
+        }
 
-    } else {
-        const processedData = {
-            _method: "PUT",
-            title: data.title,
-            description: data.description,
-            price: data.price,
-            published: data.published ? 1 : 0,
-            imageUpdated: imageUpdated ? 1 : 0, // Include the flag even for JSON requests
-        };
-        data = processedData; 
-    }
+        // If no new images were added, add a flag to indicate we're not updating images
+        if (!hasNewImages) {
+            processedData.append("no_new_images", "1");
+        }
+
+            // Append deleted images if any
+            if (originalData.deleted_images && originalData.deleted_images.length > 0) {
+                for (let i = 0; i < originalData.deleted_images.length; i++) {
+                    const imageInfo = originalData.deleted_images[i];
+                    if (typeof imageInfo === 'object' && imageInfo.id) {
+                        processedData.append("deleted_images[]", imageInfo.id);
+                        processedData.append("deleted_filenames[]", imageInfo.filename);
+                    } else {
+                        processedData.append("deleted_images[]", imageInfo);
+                    }
+                }
+            }
+
+            // Append image positions if any
+            if (originalData.image_positions) {
+                for (const [posId, position] of Object.entries(originalData.image_positions)) {
+                    processedData.append(`image_positions[${posId}]`, position);
+                }
+            }
+
+            // Append other product data
+            processedData.append("title", originalData.title);
+            processedData.append("description", originalData.description || '');
+            processedData.append("price", originalData.price);
+            processedData.append("published", originalData.published ? "1" : "0");
+            processedData.append("quantity", originalData.quantity || "");
+            processedData.append("_method", "PUT");
+
+        // We're always using FormData now
+
         try {
-           // console.log('Sending product data:', data);
-            const response = await axiosClient.post(`/products/${id}`, data, {
+            const response = await axiosClient.post(`/products/${id}`, processedData, {
                 headers: {
                     "Content-Type":
-                        data instanceof FormData
+                        processedData instanceof FormData
                             ? "multipart/form-data"
                             : "application/json",
                 },
@@ -166,7 +220,6 @@ export const useProductStore = defineStore("products", () => {
                     "products",
                     JSON.stringify(products.value.data.data)
                 );
-                toast.success("Product updated successfully"); // Corrected success message
                 this.getProducts({
                     url,
                     search: "",
