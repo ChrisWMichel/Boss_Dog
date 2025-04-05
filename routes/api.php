@@ -8,6 +8,7 @@ use App\Http\Controllers\CountryController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\CustomerController;
 use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\OrderController as ApiOrderController;
@@ -38,6 +39,8 @@ Route::middleware(['auth:sanctum', 'admin'])
         Route::get('/report/customers', [ReportController::class, 'customers']);
         
         Route::post('/get-image-id', [App\Http\Controllers\Api\ProductController::class, 'getImageIdByFilename']);
+
+        Route::apiResource('/categories', CategoryController::class);
         
     });
 

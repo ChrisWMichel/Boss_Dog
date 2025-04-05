@@ -11,6 +11,7 @@ use App\Http\Resources\ProductResource;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Resources\ProductListResource;
+use App\Models\ProductCategory;
 use Aws\S3\S3Client;
 use Aws\Exception\AwsException;
 
@@ -53,9 +54,12 @@ class ProductController extends Controller
         $images = $data['images'] ?? [];
         unset($data['images']);
         unset($data['image']); // Remove old single image field if present
+        $categories = $data['categories'] ?? [];
 
         // Create the product without images
         $product = Product::create($data);
+
+        $this->saveCategories($categories, $product);
 
         // Process and save multiple images
         if (!empty($images)) {
@@ -73,8 +77,8 @@ class ProductController extends Controller
      */
     public function show(Product $product)
     {
-        // Eager load the images relationship
-        $product->load('images');
+        // Eager load the images and categories relationships
+        $product->load(['images', 'categories']);
         return new ProductResource($product);
     }
 
@@ -109,8 +113,11 @@ class ProductController extends Controller
     unset($data['deleted_images']);
     unset($data['image_positions']);
     unset($data['image']); // Remove old single image field if present
+    $categories = $data['categories'] ?? [];
 
     $product->update($data);
+
+    $this->saveCategories($categories, $product);
 
     // Process deleted images
     if (!empty($deletedImages)) {
@@ -284,6 +291,12 @@ public function getImageIdByFilename(Request $request)
                 Log::warning("Image details: " . json_encode($image));
             }
         }
+    }
+
+    private function saveCategories($categoryIds, $product)
+    {
+        // remove and add categories to the product
+        $product->categories()->sync($categoryIds);
     }
 }
 

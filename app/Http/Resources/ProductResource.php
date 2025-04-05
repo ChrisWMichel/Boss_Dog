@@ -33,6 +33,7 @@ class ProductResource extends JsonResource
             }),
             'quantity' => $this->quantity,
             'published' => (bool)$this->published,
+            'categories' => $this->categories->pluck('id'),
             'created_at' => (new \DateTime($this->created_at))->format('m-d-Y'),
             'updated_at' => (new \DateTime($this->updated_at))->format('m-d-Y'),
         ];

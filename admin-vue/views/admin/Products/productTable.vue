@@ -188,6 +188,7 @@
                   <div class="px-1 py-1">
                     <MenuItem v-slot="{ active }">
                       <router-link
+                        class="hover:text-white"
                         :class="[
                           active ? 'bg-indigo-600 text-white' : 'text-gray-900',
                           'group flex w-full items-center rounded-md px-2 py-2 text-sm',
@@ -199,7 +200,7 @@
                       >
                         <PencilIcon
                           :active="active"
-                          class="w-5 h-5 mr-2 text-indigo-400"
+                          class="w-5 h-5 mr-2 text-indigo-400 hover:text-white"
                           aria-hidden="true"
                         />
                         Edit
@@ -215,7 +216,7 @@
                       >
                         <TrashIcon
                           :active="active"
-                          class="w-5 h-5 mr-2 text-indigo-400"
+                          class="w-5 h-5 mr-2 text-indigo-400 hover:text-white"
                           aria-hidden="true"
                         />
                         Delete

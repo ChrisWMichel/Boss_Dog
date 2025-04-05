@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "strict": true,
+    "jsx": "preserve",
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "lib": ["esnext", "dom"],
+    "types": ["vite/client"],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["admin-vue/src/*"]
+    },
+    "skipLibCheck": true
+  },
+  "include": [
+    "admin-vue/src/**/*.ts",
+    "admin-vue/src/**/*.d.ts",
+    "admin-vue/src/**/*.tsx",
+    "admin-vue/src/**/*.vue",
+    "admin-vue/src/types/**/*.d.ts"
+  ],
+  "exclude": ["node_modules"]
+}

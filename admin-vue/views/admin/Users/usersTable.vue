@@ -250,7 +250,6 @@ import {
     TrashIcon,
     EllipsisVerticalIcon,
 } from "@heroicons/vue/24/solid";
-import userModal from "./userAdminModal.vue";
 
 const userStore = useUserStore();
 const perPage = ref(10);

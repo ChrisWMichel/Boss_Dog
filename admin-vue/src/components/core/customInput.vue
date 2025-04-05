@@ -8,6 +8,20 @@
       >
         {{ prepend }}
       </span>
+      <template v-if="type === 'select'">
+        <select
+          :id="id"
+          :value="modelValue"
+          :name="name"
+          :required="required"
+          :class="inputClasses"
+          @change="updateValue"
+        >
+          <option v-for="option in selectOptions" :value="option.key">
+            {{ option.text }}
+          </option>
+        </select>
+      </template>
       <template v-if="type === 'textarea'">
         <textarea
           :id="id"
@@ -77,6 +91,11 @@ const props = defineProps({
   required: {
     type: Boolean,
     default: false,
+  },
+  selectOptions: Array,
+  errors: {
+    type: Array,
+    required: false,
   },
   prepend: {
     type: String,

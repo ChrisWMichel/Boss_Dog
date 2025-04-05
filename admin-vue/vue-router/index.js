@@ -17,6 +17,7 @@ import Report from "../views/Reports/Report.vue";
 import ordersReport from "../views/Reports/ordersReport.vue";
 import customersReport from "../views/Reports/customersReport.vue";
 import ProductForm from "../views/admin/Products/productForm.vue";
+import Categories from "../views/admin/Categories/index.vue";
 //import NotFound from "../views/NotFound.vue";
 
 const routes = [
@@ -30,6 +31,22 @@ const routes = [
                 path: "dashboard",
                 name: "app.dashboard",
                 component: dashboard,
+            },
+            {
+                path: "categories",
+                name: "app.categories",
+                component: Categories,
+            },
+            {
+                path: "categories/create",
+                name: "app.categories.create",
+                component: Categories,
+            },
+            {
+                path: "categories/:id",
+                name: "app.categories.edit",
+                component: Categories,
+                props: true,
             },
             {
                 path: "products",

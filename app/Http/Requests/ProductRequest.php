@@ -33,6 +33,8 @@ class ProductRequest extends FormRequest
             'deleted_images.*.filename' => 'required|string',
             'image_positions' => 'nullable|array',
             'image_positions.*' => 'nullable|integer',
+            'categories' => 'nullable|array',
+            'categories.*' => 'nullable|integer|exists:categories,id',
             'published' => 'required|boolean',
             'imageUpdated' => 'nullable|boolean',
             'quantity' => 'nullable|integer',

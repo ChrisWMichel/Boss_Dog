@@ -199,6 +199,13 @@ export const useProductStore = defineStore("products", () => {
             processedData.append("quantity", originalData.quantity || "");
             processedData.append("_method", "PUT");
 
+            // Append categories if any
+            if (originalData.categories && originalData.categories.length > 0) {
+                for (let i = 0; i < originalData.categories.length; i++) {
+                    processedData.append("categories[]", originalData.categories[i]);
+                }
+            }
+
         // We're always using FormData now
 
         try {

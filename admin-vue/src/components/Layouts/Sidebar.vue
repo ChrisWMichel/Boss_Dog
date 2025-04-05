@@ -29,6 +29,7 @@ import {
   ShoppingBagIcon,
   UserGroupIcon,
   UsersIcon,
+  ClipboardDocumentListIcon,
 } from "@heroicons/vue/24/solid";
 
 const $route = useRoute();
@@ -40,6 +41,12 @@ const menuItems = reactive([
     to: { name: "app.dashboard" },
     icon: HomeIcon,
     name: "app.dashboard",
+  },
+  {
+    text: "Categories",
+    to: { name: "app.categories" },
+    icon: ClipboardDocumentListIcon,
+    name: "app.categories",
   },
   {
     text: "Products",
