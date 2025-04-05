@@ -1,6 +1,6 @@
 <template>
-  <div class="bg-white p-4 rounded-lg shadow animate-fade-in-down">
-    <div class="flex justify-between border-b-2 pb-3">
+  <div class="p-4 bg-white rounded-lg shadow animate-fade-in-down">
+    <div class="flex justify-between pb-3 border-b-2">
       <div class="flex items-center">
         <span class="ml-3"
           >Found
@@ -10,7 +10,7 @@
       </div>
     </div>
 
-    <table class="table-auto w-full">
+    <table class="w-full table-auto">
       <thead>
         <tr>
           <tableHeaderCell
@@ -68,14 +68,14 @@
         <tr>
           <td colspan="7">
             <spinner v-if="categories.loading" />
-            <p v-else class="text-center py-8 text-gray-700">There are no categories</p>
+            <p v-else class="py-8 text-center text-gray-700">There are no categories</p>
           </td>
         </tr>
       </tbody>
       <tbody v-else>
         <tr v-for="(category, index) of categories.data">
-          <td class="border-b p-2">{{ category.id }}</td>
-          <td class="border-b p-2">
+          <td class="p-2 border-b">{{ category.id }}</td>
+          <td class="p-2 border-b">
             {{ category.name }}
           </td>
           <td
@@ -83,23 +83,23 @@
           >
             {{ category.slug }}
           </td>
-          <td class="border-b p-2">
+          <td class="p-2 border-b">
             {{ category.active ? "Active" : "Inactive" }}
           </td>
-          <td class="border-b p-2">
+          <td class="p-2 border-b">
             {{ category.parent?.name || "None" }}
           </td>
-          <td class="border-b p-2">
+          <td class="p-2 border-b">
             {{ category.created_at }}
           </td>
-          <td class="border-b p-2">
+          <td class="p-2 border-b">
             <Menu as="div" class="relative inline-block text-left">
               <div>
                 <MenuButton
-                  class="inline-flex items-center justify-center rounded-full w-10 h-10 bg-black bg-opacity-0 text-sm font-medium text-white hover:bg-opacity-5 focus:bg-opacity-5 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
+                  class="inline-flex items-center justify-center w-10 h-10 text-sm font-medium text-white bg-black bg-opacity-0 rounded-full hover:bg-opacity-5 focus:bg-opacity-5 focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75"
                 >
                   <EllipsisVerticalIcon
-                    class="h-5 w-5 text-indigo-500"
+                    class="w-5 h-5 text-indigo-500"
                     aria-hidden="true"
                   />
                 </MenuButton>
@@ -114,7 +114,7 @@
                 leave-to-class="transform scale-95 opacity-0"
               >
                 <MenuItems
-                  class="absolute z-10 right-0 mt-2 w-32 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                  class="absolute right-0 z-10 w-32 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
                 >
                   <div class="px-1 py-1">
                     <MenuItem v-slot="{ active }">
@@ -127,7 +127,7 @@
                       >
                         <PencilIcon
                           :active="active"
-                          class="mr-2 h-5 w-5 text-indigo-400"
+                          class="w-5 h-5 mr-2 text-indigo-400"
                           aria-hidden="true"
                         />
                         Edit
@@ -143,7 +143,7 @@
                       >
                         <TrashIcon
                           :active="active"
-                          class="mr-2 h-5 w-5 text-indigo-400"
+                          class="w-5 h-5 mr-2 text-indigo-400"
                           aria-hidden="true"
                         />
                         Delete
@@ -208,9 +208,9 @@ function sortCategories(field) {
     }
   } else {
     sortField.value = field;
-    sortDirection.value = "asc";
+    sortDirection.value = "desc";
   }
-
+ 
   getCategories();
 }
 

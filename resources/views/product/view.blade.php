@@ -3,6 +3,9 @@
 @endphp
 
 <x-app-layout>
+    <div class="mt-20 ml-20">
+        <a href="{{ route('home.front') }}" class="text-lg font-bold text-purple-500 hover:text-purple-700"> <- Back</a>
+    </div>
     <div x-data="productItem({{ json_encode([
         'id' => $product->id,
         'slug' => $product->slug,
@@ -102,7 +105,8 @@
                 <button :disabled="product.quantity === 0 || product.quantity === null"
                     @click="addToCart($refs.quantityEl.value)"
                     class="flex justify-center w-full min-w-0 py-4 mb-6 text-lg btn-primary"
-                    :class="product.quantity === 0 || product.quantity === null ? 'cursor-not-allowed' : 'cursor-pointer'">
+                    :class="product.quantity === 0 || product.quantity === null ? 'cursor-not-allowed' :
+                        'cursor-pointer'">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mr-2" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round"

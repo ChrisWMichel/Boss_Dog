@@ -3,10 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Category;
-use App\Http\Requests\StoreCategoryRequest;
-use App\Http\Requests\UpdateCategoryRequest;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CategoryResource;
+use App\Http\Requests\StoreCategoryRequest;
+use App\Http\Requests\UpdateCategoryRequest;
 
 class CategoryController extends Controller
 {
@@ -15,15 +16,15 @@ class CategoryController extends Controller
      */
     public function index()
     {
-
-        $sortField = request('sortField', 'updated_at');
+        $sortField = request('sortField', 'name');
         $sortDirection = request('sortDirection', 'asc');
 
         $categories = Category::query()
-            ->with('parent')
-            ->orderBy($sortField, $sortDirection)
-            ->latest()
-            ->get();
+        ->with('parent')
+        ->when($sortField, function($query) use ($sortField, $sortDirection) {
+            return $query->orderBy($sortField, $sortDirection);
+        })
+        ->get();
 
         return CategoryResource::collection($categories);
     }

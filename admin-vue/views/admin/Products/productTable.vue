@@ -154,7 +154,7 @@
               </svg>
             </span>
           </td>
-          <td class="p-2 flex items-center justify-center mr-4 mt-3">
+          <td class="flex items-center justify-center p-2 mt-3 mr-4">
             {{ product.quantity }}
           </td>
           <td class="p-2 border-b">${{ product.price }}</td>

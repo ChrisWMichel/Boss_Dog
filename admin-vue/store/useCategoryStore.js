@@ -11,23 +11,28 @@ export const useCategoryStore = defineStore("category", () => {
 
     const toast = useToast();
 
-    async function getCategories() {
-        if (categories.value.length) return categories.value;
-        
-        loading.value = true;
+    async function getCategories({
+        url = null,
+        sort_field = "",
+        sort_direction = ""
+    } = {}) {
+        categories.value.loading = true;
         error.value = null;
         
         try {
-            const response = await axiosClient.get('/categories');
+            const response = await axiosClient.get(url || '/categories', {
+                params: {
+                    sort_field,
+                    sort_direction
+                }
+            });
             categories.value = response.data;
-            //console.log("Categories loaded:", categories.value);
             return categories.value;
         } catch (err) {
             console.error("Error fetching categories:", err);
             error.value = "Failed to load categories";
             return [];
         } finally {
-            //console.log("Categories loaded:", categories.value);
             loading.value = false;
         }
     }
@@ -53,12 +58,15 @@ export const useCategoryStore = defineStore("category", () => {
             if (index !== -1) {
                 categories.value.data[index] = response.data;
             }
+            toast.success("Category updated successfully");
             return response;
         } catch (err) {
             console.error("Error updating category:", err);
+            toast.error("You cannot choose category as parent which is already a child of the category.");
+            toast.error(err.response.data.message);
             throw err;
         } finally {
-            toast.success("Category updated successfully");
+            
             loading.value = false;
         }
     }

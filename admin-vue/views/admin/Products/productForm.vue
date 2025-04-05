@@ -65,6 +65,7 @@
               v-model="product.categories"
               :nodes="treeNodes"
               @node-checked="handleNodeChecked"
+              class="mb-20"
             />
             <div v-if="errors['categories']" class="text-red-500 text-sm mt-1">
               {{ errors["categories"] }}

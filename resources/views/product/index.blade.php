@@ -1,9 +1,11 @@
 @php
     use Illuminate\Support\Str;
+    $categorySorting = App\Models\Category::getActiveAsTree();
 @endphp
 
 <x-app-layout>
-    <div class="grid gap-8 p-5 mt-20 grig-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+    <x-category-list :categorySorting="$categorySorting ?? []" class="px-4 -mt-5 -ml5" />
+    <div class="grid gap-8 p-5 grig-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         @foreach ($products ?? [] as $product)
             <div x-data="productItem({{ json_encode([
                 'id' => $product->id,

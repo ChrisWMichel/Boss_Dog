@@ -10,6 +10,7 @@ use App\Http\Controllers\CheckoutController;
 Route::middleware(['guestOrVerified'])->group(function (){
 
     Route::get('/', [ProductController::class, 'index'])->name('home.front');
+    Route::get('/category/{category:slug}', [ProductController::class, 'category'])->name('by-category');
     Route::get('/product/{product:slug}', [ProductController::class, 'show'])->name('product.view');
 
     Route::prefix('/cart')->name('cart.')->group(function () {

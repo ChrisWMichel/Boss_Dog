@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Product;
-use Illuminate\Http\Request;
+use App\Models\Category;
+
 
 class ProductController extends Controller
 {
@@ -28,5 +29,21 @@ class ProductController extends Controller
             'product' => $product,
             'imageUrls' => $imageUrls
         ]);
+    }
+
+    public function category(Category $category){
+        
+        $categories = Category::getAllChildrenByParent($category);
+
+        $products = Product::with('images')
+            ->select('products.*')
+            ->distinct()
+            ->join('product_categories AS pc', 'pc.product_id', '=', 'products.id')
+            ->whereIn('pc.category_id', array_map(fn($c) => $c->id, $categories))
+            ->where('published', true)
+            ->orderBy('updated_at', 'desc')
+            ->paginate(10);
+
+        return view('product.index', ['products' => $products]);
     }
 }

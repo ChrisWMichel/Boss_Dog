@@ -14,6 +14,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import productTable from "./productTable.vue";
+import ProductForm from "./productForm.vue";
 
 const productModel = ref({
   id: "",

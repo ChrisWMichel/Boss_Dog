@@ -1,5 +1,9 @@
 <template>
     <GuestLayout title="Sign into your account" @submit="login">
+        <div>
+            <p class="text-lg text-center text-gray-700"><span class="font-bold">Email</span>: admin@admin.com</p>
+            <p class="text-lg text-center text-gray-700"><span class="font-bold">Password</span>: password</p>
+            </div>
         <div class="text-left">
             <label for="email" class="block font-medium text-gray-900 text-sm/6"
                 >Email address</label
