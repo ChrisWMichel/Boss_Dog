@@ -19,7 +19,7 @@ class CartController extends Controller
         foreach($products as $product){
             $total += $product->price * $product->quantity;
         }
-        return view('cart.index', compact('products', 'cartItems', 'total'));
+        return view('Cart.index', compact('products', 'cartItems', 'total'));
     }
 
     public function add(Request $request, Product $product){

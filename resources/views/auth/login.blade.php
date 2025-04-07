@@ -14,7 +14,7 @@
                     account</a>
             </p>
             <div>
-                <p class="text-lg text-center text-gray-700"><span class="font-bold">Email</span>: andy@admin.com</p>
+                <p class="text-lg text-center text-gray-700"><span class="font-bold">Email</span>: andy@email.com</p>
                 <p class="text-lg text-center text-gray-700"><span class="font-bold">Password</span>: password</p>
             </div>
 

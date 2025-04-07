@@ -10,7 +10,7 @@
         <div
           :data-id="image.id"
           class="relative w-[120px] h-[120px] rounded border border-dashed flex items-center justify-center hover:border-purple-500 overflow-hidden">
-          <img :src="image.url" class="max-w-full max-h-full" :class="image.deleted ? 'opacity-50' : ''">
+          <img :src="image.url" class="max-w-full max-h-full" :class="image.deleted ? 'opacity-50' : ''" @error="handleImageError($event, image)">
           <small v-if="image.deleted"
                  class="absolute bottom-0 left-0 right-0 flex items-center justify-between px-2 py-1 text-white bg-black w-100">
             To be deleted
@@ -31,7 +31,7 @@
         Upload
       </span>
       <input type="file" class="absolute top-0 bottom-0 left-0 right-0 w-full h-full opacity-0"
-             @change="onFileChange" multiple>
+             @change="onFileChange" multiple accept="image/*">
     </div>
   </div>
 </template>
@@ -44,6 +44,10 @@ const files = ref([]);
 const imagesUrls = ref([]);
 const deletedImages = ref([]);
 const imagePositions = ref({});
+
+const handleImageError = (event, image) => {
+  console.error("Failed to load image:", image.url);
+};
 
 const imagesList = computed(() => {
   return imagesUrls.value.map((url, index) => {
@@ -115,9 +119,15 @@ const onFileChange = (event) => {
   Promise.all(filePromises).then((newUrls) => {    
     // Add new URLs to imagesUrls
     newUrls.forEach(url => {
-      if (!imagesUrls.value.includes(url)) {
-        imagesUrls.value.push(url);
-      }
+      // Create a proper image object for each URL
+      const newImage = {
+        id: Date.now() + Math.random().toString(36).substring(2, 9), // Generate a unique ID
+        url: url,
+        deleted: false,
+        isProp: false
+      };
+      
+      imagesUrls.value.push(newImage);
     });
     
     // Emit the updated files array

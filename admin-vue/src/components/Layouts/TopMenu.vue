@@ -4,13 +4,13 @@
             <Bars3Icon class="w-8 h-8 hover:text-slate-400" />
         </button>
         <div class="flex items-center justify-center flex-1">
-            <router-link :to="{ name: 'home' }" class="block mx-auto">
+            <a href="https://boss-dog.michel-5.com" class="block mx-auto">
                 <img
                     class="mx-auto rounded-md w-14 h-14 custom-img-size"
                     src="../../assets/bossDogLogo.png"
                     alt="Boss Man Company"
                 />
-            </router-link>
+            </a>
         </div>
         <div><profile-dropdown /></div>
     </div>

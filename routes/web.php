@@ -23,7 +23,7 @@ Route::middleware(['guestOrVerified'])->group(function (){
 });
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    return redirect('/app/dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth', 'verified')->group(function () {
@@ -49,4 +49,9 @@ require __DIR__.'/auth.php';
 // Catch-all route to handle Vue Router
 Route::get('/{any}', function () {
     return view('app'); 
+})->where('any', '.*');
+
+// Handle build prefix in production
+Route::get('/build/{any}', function () {
+    return view('app');
 })->where('any', '.*');

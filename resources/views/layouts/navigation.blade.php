@@ -5,7 +5,7 @@
     class="fixed top-0 left-0 right-0 z-50 flex justify-between text-white shadow-md bg-slate-800">
     <div class="flex">
         <a href="{{ route('home.front') }}" class="block pt-2 pl-5">
-            <img src="{{ asset('images/projectLogo-small.png') }}" alt="Logo" class="h-14" />
+            <img src="{{ asset('images/projectLogo-small.png') }}?v=1" alt="Logo" class="h-14" />
         </a>
         <a href="{{ url('/app/dashboard') }}" target="_blank"
             class="flex items-center justify-center h-full px-4 ml-10 text-center hover:bg-slate-700">

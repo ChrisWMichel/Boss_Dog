@@ -56,7 +56,7 @@
           </div>
           <div>
             <p class="mb-2 font-medium">Categories:</p>
-            <div v-if="treeNodes.length === 0" class="text-gray-500 italic">
+            <div v-if="treeNodes.length === 0" class="italic text-gray-500">
               No categories available
             </div>
 
@@ -67,7 +67,7 @@
               @node-checked="handleNodeChecked"
               class="mb-20"
             />
-            <div v-if="errors['categories']" class="text-red-500 text-sm mt-1">
+            <div v-if="errors['categories']" class="mt-1 text-sm text-red-500">
               {{ errors["categories"] }}
             </div>
           </div>
@@ -113,7 +113,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import customInput from "../../../src/components/core/customInput.vue";
 import spinner from "../../../src/components/core/spinner.vue";
 import { useRoute, useRouter } from "vue-router";
@@ -144,6 +144,10 @@ const product = ref({
 });
 
 const errors = ref({});
+
+watch(() => product.value.images, (newImages) => {
+  //console.log('Product images changed:', newImages);
+}, { deep: true });
 
 const loading = ref(false);
 
@@ -340,7 +344,7 @@ const onSubmit = async (_, close = false) => {
     const productData = {
       ...product.value,
     };
-    console.log("Submitting product data:", productData);
+    //console.log("Submitting product data:", productData);
     await productStore
       .updateProduct(productData)
       .then(() => {
@@ -403,7 +407,8 @@ const onSubmit = async (_, close = false) => {
 // This function is just a placeholder for future functionality if needed
 const handleNodeChecked = () => {};
 
-const handleImageDeleted = async ({ filename }) => {
+const handleImageDeleted = async ({url, filename }) => {
+  console.log('Image deleted:', { url, filename });
   try {
     // Get the image ID from the server
     const response = await axiosClient.post("/get-image-id", {
